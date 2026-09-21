@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Admin Dashboard | KTA Badminton</title>
+    <style>
+        :root {
+            --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --muted: #94a3b8; 
+            --admin: #ef4444; --mod: #10b981; --user: #3b82f6;
+            --danger: #ef4444; --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--text); padding: 16px; padding-bottom: 80px; }
+
+        /* Header Admin */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .header-left h2 { color: var(--admin); font-size: 20px; margin-bottom: 4px; }
+        .header-left p { font-size: 13px; color: var(--muted); }
+        .admin-badge { background: rgba(239, 68, 68, 0.2); color: var(--admin); padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; border: 1px solid rgba(239, 68, 68, 0.3); display: flex; align-items: center; gap: 4px; }
+
+        /* Tabs Navigation */
+        .tabs { display: flex; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 20px; padding: 4px; }
+        .tab-btn { flex: 1; padding: 10px; text-align: center; font-size: 14px; font-weight: bold; color: var(--muted); background: transparent; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .tab-btn.active { background: var(--card); color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+
+        /* Danh sách (Dùng chung cho User và Session) */
+        .list-container { display: none; flex-direction: column; gap: 12px; }
+        .list-container.active { display: flex; }
+
+        .card-item { background: var(--card); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); }
+        .item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .item-name { font-size: 16px; font-weight: bold; color: #fff; margin-bottom: 4px; }
+        .item-sub { font-size: 13px; color: var(--muted); }
+        
+        /* Role Badges */
+        .role { padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: bold; }
+        .role-admin { background: rgba(239,68,68,0.1); color: var(--admin); }
+        .role-mod { background: rgba(16,185,129,0.1); color: var(--mod); }
+        .role-user { background: rgba(59,130,246,0.1); color: var(--user); }
+
+        /* Action Buttons */
+        .actions { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .btn { flex: 1; min-height: 40px; border-radius: 10px; border: none; font-size: 13px; font-weight: bold; color: white; cursor: pointer; transition: 0.2s; }
+        .btn:active { transform: scale(0.96); }
+        .btn-upgrade { background: rgba(16,185,129,0.2); color: var(--mod); }
+        .btn-ban { background: rgba(239,68,68,0.2); color: var(--danger); }
+        .btn-delete { background: var(--danger); }
+
+        .footer { text-align: center; font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 30px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-left">
+            <h2>KTA Admin Panel</h2>
+            <p>Hệ thống quản lý Tổng</p>
+        </div>
+        <div class="admin-badge">👑 Kim Tuấn An</div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('users')">Quản lý Lông Thủ</button>
+        <button class="tab-btn" onclick="switchTab('sessions')">Quản lý Kèo Đấu</button>
+    </div>
+
+    <!-- TAB 1: QUẢN LÝ USER -->
+    <div id="tab-users" class="list-container active">
+        <!-- Render từ JS -->
+    </div>
+
+    <!-- TAB 2: QUẢN LÝ KÈO ĐẤU -->
+    <div id="tab-sessions" class="list-container">
+        <!-- Render từ JS -->
+    </div>
+
+    <div class="footer">© 2026 KTA.Teams</div>
+
+    <script>
+        // --- 1. MOCK DATA BƯỚC ĐẦU (Giả lập Database trên LocalStorage) ---
+        // Nạp data ảo nếu LocalStorage trống để sếp An test giao diện
+        if (!localStorage.getItem('kta_all_users')) {
+            const fakeUsers = [
+                { id: 'U001', name: 'Kim Tuấn An', level: 'Lvl 8 - Trùm', role: 'admin' },
+                { id: 'U002', name: 'Quốc Đạt', level: 'Lvl 5 - Trung bình', role: 'mod' },
+                { id: 'U003', name: 'Hải Con', level: 'Lvl 2 - Yếu', role: 'user' },
+                { id: 'U004', name: 'Boom Kèo Chuyên Nghiệp', level: 'Lvl 1 - Newbie', role: 'user' }
+            ];
+            localStorage.setItem('kta_all_users', JSON.stringify(fakeUsers));
+        }
+
+        let allUsers = JSON.parse(localStorage.getItem('kta_all_users')) || [];
+        let allSessions = JSON.parse(localStorage.getItem('kta_sessions')) || [];
+
+        // --- 2. HÀM CHUYỂN TAB ---
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.list-container').forEach(tab => tab.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        // --- 3. HÀM RENDER USERS ---
+        function renderUsers() {
+            const container = document.getElementById('tab-users');
+            container.innerHTML = '';
+
+            allUsers.forEach(u => {
+                let roleClass = u.role === 'admin' ? 'role-admin' : (u.role === 'mod' ? 'role-mod' : 'role-user');
+                let roleName = u.role.toUpperCase();
+                
+                let actionBtns = '';
+                if (u.role === 'user') {
+                    actionBtns = `
+                        <button class="btn btn-upgrade" onclick="upgradeToHost('${u.id}')">⬆️ Cấp quyền Host</button>
+                        <button class="btn btn-ban" onclick="alert('Đã ban vĩnh viễn thanh niên này!')">🔨 Khóa mõm</button>
+                    `;
+                } else if (u.role === 'mod') {
+                    actionBtns = `<button class="btn btn-ban" onclick="downgradeUser('${u.id}')">⬇️ Giáng xuống User</button>`;
+                } else {
+                    actionBtns = `<span style="font-size:12px; color:#94a3b8; font-style:italic;">Admin hệ thống - Không thể đụng tới</span>`;
+                }
+
+                container.innerHTML += `
+                    <div class="card-item">
+                        <div class="item-header">
+                            <div>
+                                <div class="item-name">${u.name}</div>
+                                <div class="item-sub">Trình độ: ${u.level}</div>
+                            </div>
+                            <div class="role ${roleClass}">${roleName}</div>
+                        </div>
+                        <div class="actions">
+                            ${actionBtns}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- 4. HÀM RENDER SESSIONS ---
+        function renderSessions() {
+            const container = document.getElementById('tab-sessions');
+            container.innerHTML = '';
+
+            if (allSessions.length === 0) {
+                container.innerHTML = '<div style="text-align:center; color:#94a3b8; padding: 20px;">Hệ thống chưa có kèo nào.</div>';
+                return;
+            }
+
+            allSessions.forEach(s => {
+                container.innerHTML += `
+                    <div class="card-item">
+                        <div class="item-header">
+                            <div>
+                                <div class="item-name">${s.location}</div>
+                                <div class="item-sub">⏰ ${s.time} | 🏸 Cầu: ${s.shuttlecock}</div>
+                            </div>
+                            <div class="role role-mod">ĐANG MỞ</div>
+                        </div>
+                        <div class="actions">
+                            <button class="btn btn-delete" onclick="forceDeleteSession('${s.id}')">🗑 Xóa ép buộc (Admin)</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- 5. LOGIC XỬ LÝ ---
+        function upgradeToHost(id) {
+            if(confirm("Bạn muốn nâng cấp người này lên làm Chủ Kèo (Host/Mod)?")) {
+                let user = allUsers.find(u => u.id === id);
+                if(user) user.role = 'mod';
+                localStorage.setItem('kta_all_users', JSON.stringify(allUsers));
+                renderUsers();
+            }
+        }
+
+        function downgradeUser(id) {
+            if(confirm("Tước quyền Host của người này?")) {
+                let user = allUsers.find(u => u.id === id);
+                if(user) user.role = 'user';
+                localStorage.setItem('kta_all_users', JSON.stringify(allUsers));
+                renderUsers();
+            }
+        }
+
+        function forceDeleteSession(id) {
+            if(confirm("Xóa thẳng tay kèo này khỏi hệ thống?")) {
+                allSessions = allSessions.filter(s => s.id !== id);
+                localStorage.setItem('kta_sessions', JSON.stringify(allSessions));
+                renderSessions();
+            }
+        }
+
+        // Khởi động
+        renderUsers();
+        renderSessions();
+    </script>
+</body>
+</html>
