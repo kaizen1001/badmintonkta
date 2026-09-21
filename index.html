@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>KTA Badminton | Sân Chơi Cầu Lông Vãng Lai</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --card-hover: #273548;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+
+        /* Header Styles */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .logo-area h1 {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-area p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .user-profile-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .user-profile-badge:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Control / Filter Bar */
+        .control-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .search-box:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .btn-refresh {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+
+        .btn-refresh:active {
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Session Card Styles */
+        .session-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .session-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .session-card:hover {
+            background: var(--card-hover);
+        }
+
+        .session-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .host-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #818cf8;
+        }
+
+        .status-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+
+        .status-open {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-full {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .session-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            font-size: 13.5px;
+            color: var(--text-muted);
+        }
+
+        .detail-row span {
+            color: #fff;
+            font-weight: 500;
+            margin-left: 6px;
+        }
+
+        .btn-join {
+            width: 100%;
+            height: 44px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-join:active {
+            transform: scale(0.97);
+            background: var(--accent-hover);
+        }
+
+        .btn-join.disabled {
+            background: #334155;
+            color: var(--text-muted);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Loading & Empty States */
+        .state-container {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 24px 24px 0 0;
+            padding: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .modal-desc {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-modal {
+            flex: 1;
+            height: 44px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-confirm {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Toast Notification */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 13.5px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .footer-credit {
+            text-align: center;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Header -->
+        <div class="app-header">
+            <div class="logo-area">
+                <h1>🏸 KTA Badminton</h1>
+                <p>Cập nhật kèo vãng lai real-time</p>
+            </div>
+            <div class="user-profile-badge" id="userProfileBtn" onclick="openProfileModal()">
+                <span id="userNameDisplay">Đang tải...</span>
+            </div>
+        </div>
+
+        <!-- Control Bar -->
+        <div class="control-bar">
+            <input type="text" id="searchInput" class="search-box" placeholder="Tìm theo địa điểm, tên sân..." oninput="filterSessions()">
+            <button class="btn-refresh" onclick="fetchSessions()" title="Làm mới">🔄</button>
+        </div>
+
+        <!-- Session List Container -->
+        <div id="loadingState" class="state-container">
+            <div class="spinner"></div>
+            Đang kết nối đến Database Google Sheets...
+        </div>
+
+        <div id="emptyState" class="state-container" style="display: none;">
+            Hiện tại chưa có buổi đánh cầu nào được tạo trên hệ thống.
+        </div>
+
+        <div class="session-list" id="sessionList">
+            <!-- Dữ liệu được render động qua JavaScript -->
+        </div>
+
+        <div class="footer-credit">
+            © 2026 KTA.Teams • Powered by Google Apps Script
+        </div>
+    </div>
+
+    <!-- Modal Xin Slot / Xác nhận -->
+    <div class="modal-overlay" id="actionModal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">Xác nhận xin slot</div>
+            <div class="modal-desc" id="modalDesc">Bạn muốn đăng ký tham gia buổi đánh này cùng nhóm chứ?</div>
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="closeModal()">Hủy bỏ</button>
+                <button class="btn-modal btn-confirm" id="modalConfirmBtn" onclick="executeJoin()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast">Thông báo hệ thống</div>
+
+    <script>
+        // Link API chính thức của KTA.Teams từ Google Apps Script
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzOZgNrN2ynajhIq-5HM1dp6SgoUhc353H8s3sjbGuajyYRj6AS2B6o5QJBhJCkjtg/exec';
+
+        let rawSessionsData = [];
+        let selectedSessionId = null;
+
+        // Khởi chạy khi tải trang
+        window.addEventListener('DOMContentLoaded', () => {
+            checkUserProfile();
+            fetchSessions();
+        });
+
+        // Kiểm tra thông tin User trong localStorage
+        function checkUserProfile() {
+            const savedUser = localStorage.getItem('kta_user');
+            const userDisplay = document.getElementById('userNameDisplay');
+
+            if (!savedUser) {
+                // Nếu chưa có profile, tự động điều hướng sang trang register
+                userDisplay.innerText = '👤 Khai báo ngay';
+                setTimeout(() => {
+                    window.location.href = 'register.html';
+                }, 500);
+            } else {
+                try {
+                    const user = JSON.parse(savedUser);
+                    userDisplay.innerText = `🏸 ${user.name} (${user.level.split(' - ')[0]})`;
+                } catch (e) {
+                    userDisplay.innerText = '👤 Tài khoản';
+                }
+            }
+        }
+
+        // Mở profile hoặc chuyển hướng để đổi thông tin
+        function openProfileModal() {
+            const savedUser = localStorage.getItem('kta_user');
+            if (!savedUser) {
+                window.location.href = 'register.html';
+            } else {
+                const user = JSON.parse(savedUser);
+                if (confirm(`Hồ sơ hiện tại:\nTên: ${user.name}\nTrình độ: ${user.level}\n\nBạn có muốn cập nhật lại thông tin không?`)) {
+                    window.location.href = 'register.html';
+                }
+            }
+        }
+
+        // Lấy dữ liệu từ Google Sheets qua Apps Script API
+        async function fetchSessions() {
+            const loadingState = document.getElementById('loadingState');
+            const emptyState = document.getElementById('emptyState');
+            const listContainer = document.getElementById('sessionList');
+
+            loadingState.style.display = 'block';
+            emptyState.style.display = 'none';
+            listContainer.innerHTML = '';
+
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                loadingState.style.display = 'none';
+
+                if (!data || data.length === 0) {
+                    emptyState.style.display = 'block';
+                    rawSessionsData = [];
+                    return;
+                }
+
+                rawSessionsData = data;
+                renderSessions(rawSessionsData);
+
+            } catch (error) {
+                loadingState.style.display = 'none';
+                listContainer.innerHTML = `
+                    <div class="state-container" style="color: var(--danger);">
+                        ⚠️ Không thể kết nối đến máy chủ Google Sheets.<br>Vui lòng kiểm tra lại đường truyền mạng!
+                    </div>
+                `;
+                console.error('Fetch error:', error);
+            }
+        }
+
+        // Hiển thị danh sách kèo ra giao diện
+        function renderSessions(sessions) {
+            const listContainer = document.getElementById('sessionList');
+            const emptyState = document.getElementById('emptyState');
+            listContainer.innerHTML = '';
+
+            if (sessions.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            } else {
+                emptyState.style.display = 'none';
+            }
+
+            // Đảo ngược mảng để kèo mới nhất lên đầu tiên
+            const reversed = [...sessions].reverse();
+
+            reversed.forEach(session => {
+                const isFull = String(session.Status).toUpperCase() === 'FULL';
+                const statusClass = isFull ? 'status-full' : 'status-open';
+                const statusText = isFull ? 'Đã kín chỗ' : 'Đang nhận slot';
+                
+                const btnAttr = isFull 
+                    ? `class="btn-join disabled" disabled` 
+                    : `class="btn-join" onclick="promptJoin('${session.ID}', '${session.Location}')"`;
+
+                const cardHTML = `
+                    <div class="session-card">
+                        <div class="session-top">
+                            <div class="host-info">👑 ${session.Host || 'Host KTA'}</div>
+                            <div class="status-badge ${statusClass}">${statusText}</div>
+                        </div>
+                        <div class="session-details">
+                            <div class="detail-row">⏰ Thời gian:<span>${session.Time}</span></div>
+                            <div class="detail-row">📍 Địa điểm:<span>${session.Location}</span></div>
+                            <div class="detail-row">🏸 Loại cầu:<span>${session.Shuttlecock}</span></div>
+                            <div class="detail-row">📊 Trình độ:<span>${session.ReqLevel}</span></div>
+                            <div class="detail-row">👥 Giới hạn:<span>Tối đa ${session.Max} người</span></div>
+                        </div>
+                        <button ${btnAttr}>Xin Slot Tham Gia</button>
+                    </div>
+                `;
+                listContainer.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+
+        // Bộ lọc tìm kiếm theo thời gian hoặc địa điểm
+        function filterSessions() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = rawSessionsData.filter(s => {
+                const loc = String(s.Location || '').toLowerCase();
+                const time = String(s.Time || '').toLowerCase();
+                const host = String(s.Host || '').toLowerCase();
+                return loc.includes(query) || time.includes(query) || host.includes(query);
+            });
+            renderSessions(filtered);
+        }
+
+        // Mở Modal xác nhận đăng ký slot
+        function promptJoin(sessionId, locationName) {
+            const user = JSON.parse(localStorage.getItem('kta_user'));
+            if (!user) {
+                showToast('⚠️ Vui lòng khai báo hồ sơ trước!');
+                setTimeout(() => window.location.href = 'register.html', 1000);
+                return;
+            }
+
+            selectedSessionId = sessionId;
+            document.getElementById('modalTitle').innerText = `Đăng ký sân: ${locationName}`;
+            document.getElementById('modalDesc').innerText = `Xác nhận dùng tên "${user.name}" (${user.level}) để xin slot đánh trận này với Host chứ?`;
+            
+            document.getElementById('actionModal').classList.add('active');
+        }
+
+        // Đóng Modal
+        function closeModal() {
+            document.getElementById('actionModal').classList.remove('active');
+            selectedSessionId = null;
+        }
+
+        // Thực hiện gửi yêu cầu xin slot (Kết nối API backend mở rộng)
+        async function executeJoin() {
+            const user = JSON.parse(localStorage.getItem('kta_user'));
+            if (!user || !selectedSessionId) {
+                closeModal();
+                return;
+            }
+
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+            confirmBtn.innerText = 'Đang gửi...';
+            confirmBtn.disabled = true;
+
+            try {
+                // Giả lập gửi thông tin đăng ký slot về hệ thống
+                // Bạn có thể mở rộng doPost trong GAS để lưu danh sách player theo Session ID
+                await new Promise(resolve => setTimeout(resolve, 800));
+
+                closeModal();
+                showToast(`✅ Xin slot thành công! Hãy liên hệ Host.`);
+            } catch (err) {
+                showToast(`❌ Lỗi kết nối, vui lòng thử lại!`);
+            } finally {
+                confirmBtn.innerText = 'Xác nhận';
+                confirmBtn.disabled = false;
+            }
+        }
+
+        // Hiển thị thông báo Toast góc màn hình
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
