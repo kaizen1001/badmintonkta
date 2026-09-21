@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Quản Lý Kèo | KTA Badminton</title>
+    <style>
+        :root {
+            --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --muted: #94a3b8; 
+            --accent: #10b981; --danger: #ef4444; --primary: #3b82f6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
+        body { background: var(--bg); color: var(--text); padding: 16px; padding-bottom: 60px; }
+
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .header h2 { color: var(--accent); font-size: 20px; }
+        .badge-mod { background: rgba(16,185,129,0.2); color: var(--accent); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; border: 1px solid rgba(16,185,129,0.3); }
+
+        .card { background: var(--card); padding: 16px; border-radius: 16px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        .card-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #fff; display: flex; align-items: center; gap: 8px; }
+        
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+        .form-control { width: 100%; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 15px; outline: none; }
+        .form-control:focus { border-color: var(--primary); }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .btn { width: 100%; padding: 14px; border-radius: 10px; border: none; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; color: white; }
+        .btn-primary { background: var(--primary); margin-top: 8px; }
+        .btn-primary:active { background: #2563eb; transform: scale(0.98); }
+        .btn-danger { background: rgba(239,68,68,0.2); color: var(--danger); }
+
+        .session-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 10px; }
+        .session-item h4 { color: #818cf8; font-size: 15px; margin-bottom: 4px; }
+        .session-info { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+        .manage-actions { display: flex; gap: 8px; }
+        .manage-actions button { flex: 1; padding: 8px; font-size: 13px; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; }
+        .btn-view { background: #475569; color: white; }
+        .btn-close { background: var(--danger); color: white; }
+
+        /* Toast thông báo */
+        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; padding: 12px 24px; border-radius: 30px; font-weight: bold; font-size: 14px; display: none; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); z-index: 100; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>🛠 Quản Lý Tổ Chức</h2>
+        <div class="badge-mod">MODERATOR</div>
+    </div>
+
+    <!-- Form Tạo Kèo Mới -->
+    <div class="card">
+        <div class="card-title">🏸 Tạo Buổi Đánh Mới</div>
+        <form id="createSessionForm" onsubmit="createSession(event)">
+            <div class="form-group">
+                <label>Thời gian (Ngày & Giờ)</label>
+                <input type="text" id="time" class="form-control" placeholder="VD: 19:00 - 22:00 | T6 (28/10)" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Sân đánh (Tên sân & Số sân)</label>
+                <input type="text" id="location" class="form-control" placeholder="VD: Sân Vina, Sân số 3" required>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Loại cầu</label>
+                    <select id="shuttlecock" class="form-control">
+                        <option value="VinaStar">VinaStar</option>
+                        <option value="Thành Công">Thành Công</option>
+                        <option value="Lining">Lining</option>
+                        <option value="88">88</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Số lượng tối đa</label>
+                    <input type="number" id="maxPlayers" class="form-control" placeholder="VD: 8" required min="2" max="20">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Yêu cầu trình độ</label>
+                <input type="text" id="reqLevel" class="form-control" placeholder="VD: Lvl 3 (TB Yếu) trở lên" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Phát Lên Trang Chủ</button>
+        </form>
+    </div>
+
+    <!-- Danh sách kèo đã tạo -->
+    <div class="card">
+        <div class="card-title">📋 Các Kèo Đang Mở</div>
+        <div id="activeSessions">
+            <!-- Render bằng JavaScript -->
+        </div>
+    </div>
+
+    <div id="toast">✅ Đã tạo kèo thành công!</div>
+
+    <script>
+        // Lấy dữ liệu từ LocalStorage (Giả lập Database)
+        let sessions = JSON.parse(localStorage.getItem('kta_sessions')) || [];
+
+        function renderSessions() {
+            const container = document.getElementById('activeSessions');
+            container.innerHTML = '';
+
+            if (sessions.length === 0) {
+                container.innerHTML = '<div style="text-align:center; color:#94a3b8; font-size: 13px; padding: 10px;">Chưa có kèo nào đang mở.</div>';
+                return;
+            }
+
+            // Đảo ngược mảng để kèo mới nhất lên đầu
+            const reversedSessions = [...sessions].reverse();
+
+            reversedSessions.forEach(session => {
+                const itemHTML = `
+                    <div class="session-item" id="${session.id}">
+                        <h4>${session.location}</h4>
+                        <div class="session-info">
+                            ⏰ ${session.time} <br>
+                            🏸 Cầu: ${session.shuttlecock} | 📊 Trình độ: ${session.level} <br>
+                            👥 Đã nhận: 0/${session.max} người
+                        </div>
+                        <div class="manage-actions">
+                            <button class="btn-view" onclick="alert('Tính năng quản lý người chơi và đếm set sẽ code ở bước sau.')">Quản lý Set / Chia tiền</button>
+                            <button class="btn-close" onclick="deleteSession('${session.id}')">Xóa kèo</button>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', itemHTML);
+            });
+        }
+
+        function createSession(event) {
+            event.preventDefault();
+
+            const newSession = {
+                id: 'S_' + Date.now(),
+                time: document.getElementById('time').value,
+                location: document.getElementById('location').value,
+                shuttlecock: document.getElementById('shuttlecock').value,
+                max: document.getElementById('maxPlayers').value,
+                level: document.getElementById('reqLevel').value,
+                status: 'OPEN'
+            };
+
+            // Lưu vào mảng và cập nhật LocalStorage
+            sessions.push(newSession);
+            localStorage.setItem('kta_sessions', JSON.stringify(sessions));
+
+            // Reset Form và cập nhật giao diện
+            document.getElementById('createSessionForm').reset();
+            renderSessions();
+            showToast('✅ Đã tạo kèo thành công!');
+        }
+
+        function deleteSession(id) {
+            if(confirm('Bạn có chắc chắn muốn xóa kèo này không?')) {
+                sessions = sessions.filter(s => s.id !== id);
+                localStorage.setItem('kta_sessions', JSON.stringify(sessions));
+                renderSessions();
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2500);
+        }
+
+        // Khởi chạy khi load trang
+        renderSessions();
+    </script>
+</body>
+</html>
