@@ -4,59 +4,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#030712">
-    <title>KTA Workspace Pro Max | Quản Lý Cầu Lông</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <title>KTA Workspace Pro Max | Quản Lý Cầu Lông Toàn Diện</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --bg-body: #030712; --bg-surface: #111827; --bg-surface-elevated: #1f2937;
-            --text-primary: #f9fafb; --text-secondary: #9ca3af;
-            --accent-primary: #10b981; --accent-glow: rgba(16, 185, 129, 0.35);
-            --danger: #ef4444; --border-light: rgba(255, 255, 255, 0.08);
+            --bg-body: #030712;
+            --bg-surface: #111827;
+            --bg-surface-elevated: #1f2937;
+            --bg-glass: rgba(17, 24, 39, 0.85);
+            --bg-glass-card: rgba(255, 255, 255, 0.025);
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --accent-primary: #10b981;
+            --accent-primary-hover: #059669;
+            --accent-glow: rgba(16, 185, 129, 0.35);
+            --accent-secondary: #3b82f6;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border-light: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-pill: 9999px;
+            --z-nav: 100;
+            --z-toast: 2000;
+            --z-loader: 9999;
         }
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-primary); }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
-        .app-view { display: none; width: 100%; min-height: 100vh; }
-        .app-view.active { display: block; animation: fadeIn 0.4s ease forwards; }
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
+                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 100% 100%, 32px 32px, 32px 32px;
+            overflow-x: hidden;
+        }
+
+        .app-view { display: none; opacity: 0; width: 100%; min-height: 100vh; transition: opacity 0.3s ease; }
+        .app-view.active { display: block; opacity: 1; animation: fadeIn 0.35s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; color: white; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 15px 20px; border-radius: var(--radius-md); border: none;
+            font-size: 14.5px; font-weight: 700; cursor: pointer; transition: 0.2s; color: white;
+        }
         .btn:active { transform: scale(0.97); }
         .btn:disabled { opacity: 0.6; pointer-events: none; }
         .btn-primary { background: var(--accent-primary); box-shadow: 0 4px 20px var(--accent-glow); }
-        .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); }
+        .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); color: white; }
 
         .form-group { position: relative; margin-bottom: 20px; }
-        .form-input { width: 100%; background: var(--bg-surface); border: 1px solid var(--border-light); padding: 16px; border-radius: 12px; color: white; font-size: 15px; outline: none; }
-        .form-input:focus { border-color: var(--accent-primary); }
+        .form-input {
+            width: 100%; background: var(--bg-surface); border: 1px solid var(--border-light);
+            padding: 16px; border-radius: var(--radius-md); color: white; font-size: 15px; outline: none; transition: 0.3s;
+        }
+        .form-input:focus { border-color: var(--accent-primary); box-shadow: 0 0 0 4px rgba(16,185,129,0.1); }
         .form-label { position: absolute; left: 16px; top: 16px; color: var(--text-secondary); font-size: 14px; pointer-events: none; transition: 0.3s; }
-        .form-input:focus ~ .form-label, .form-input:not(:placeholder-shown) ~ .form-label { top: -10px; left: 12px; font-size: 12px; font-weight: 700; color: var(--accent-primary); background: var(--bg-body); padding: 0 6px; }
+        .form-input:focus ~ .form-label, .form-input:not(:placeholder-shown) ~ .form-label {
+            top: -10px; left: 12px; font-size: 12px; font-weight: 700; color: var(--accent-primary); background: var(--bg-body); padding: 0 6px;
+        }
 
-        .glass-card { background: var(--bg-surface-elevated); border: 1px solid var(--border-light); border-radius: 20px; padding: 24px; }
+        .glass-card { background: var(--bg-glass); backdrop-filter: blur(20px); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         
-        /* AUTH TABS */
+        /* AUTH CSS */
+        .auth-container { width: 100%; max-width: 420px; margin: 0 auto; padding: 40px 16px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+        .auth-logo { width: 72px; height: 72px; border-radius: 18px; margin: 0 auto 16px auto; display: block; object-fit: cover; box-shadow: 0 0 25px var(--accent-glow); }
         .auth-tabs { display: flex; margin-bottom: 24px; border-bottom: 1px solid var(--border-light); }
         .auth-tab { flex: 1; text-align: center; padding: 12px; font-weight: 700; color: var(--text-secondary); cursor: pointer; border-bottom: 3px solid transparent; }
         .auth-tab.active { color: var(--accent-primary); border-bottom-color: var(--accent-primary); }
         .auth-form { display: none; }
         .auth-form.active { display: block; animation: fadeIn 0.3s; }
 
-        /* TOAST */
-        #toast-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; }
-        .kta-toast { background: var(--bg-surface-elevated); color: white; padding: 14px 20px; border-radius: 12px; border-left: 4px solid var(--accent-primary); box-shadow: 0 10px 30px rgba(0,0,0,0.8); font-weight: 600; font-size: 14px; opacity: 0; transform: translateY(20px); transition: 0.3s; }
+        /* GUEST CSS */
+        .user-container { max-width: 640px; margin: 0 auto; padding: 20px 16px 100px; }
+        .header-main { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid var(--border-light); margin-bottom: 24px; }
+        .session-card { background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; border-left: 4px solid var(--accent-primary); }
+
+        /* HOST DASHBOARD CSS */
+        .host-layout { display: flex; height: 100vh; overflow: hidden; }
+        .host-sidebar { width: 260px; background: var(--bg-surface); border-right: 1px solid var(--border-light); padding: 24px 16px; display: flex; flex-direction: column; }
+        .host-main { flex: 1; padding: 30px; overflow-y: auto; background: var(--bg-body); }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 14px; margin-bottom: 8px; border-radius: var(--radius-md); color: var(--text-secondary); cursor: pointer; font-weight: 600; text-decoration: none; }
+        .nav-link:hover { color: white; background: rgba(255,255,255,0.05); }
+        .nav-link.active { background: rgba(16,185,129,0.1); color: var(--accent-primary); font-weight: 800; border-left: 3px solid var(--accent-primary); }
+        .host-tab-pane { display: none; }
+        .host-tab-pane.active { display: block; animation: fadeIn 0.3s; }
+        .manage-item { background: var(--bg-glass-card); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+
+        @media (max-width: 768px) {
+            .host-layout { flex-direction: column; }
+            .host-sidebar { width: 100%; height: 75px; flex-direction: row; justify-content: space-around; position: fixed; bottom: 0; z-index: 100; border-top: 1px solid var(--border-light); background: rgba(17,24,39,0.95); backdrop-filter: blur(15px); padding: 0; }
+            .host-main { padding: 16px 16px 100px; }
+            .nav-link { flex-direction: column; gap: 4px; padding: 6px; font-size: 10px; width: 33%; text-align: center; border-left: none !important; }
+        }
+
+        /* TOAST & LOADER */
+        #toast-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; pointer-events: none; }
+        .kta-toast { background: var(--bg-surface-elevated); color: white; padding: 14px 20px; border-radius: var(--radius-md); border-left: 4px solid var(--accent-primary); box-shadow: 0 10px 30px rgba(0,0,0,0.8); font-weight: 600; font-size: 14px; opacity: 0; transform: translateY(20px); transition: 0.3s; }
         .kta-toast.show { opacity: 1; transform: translateY(0); }
+        .kta-toast.error { border-left-color: var(--danger); }
+
+        #global-loader { position: fixed; inset: 0; background: var(--bg-body); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.4s; }
+        .loader-spinner { width: 42px; height: 42px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--accent-primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
+    <!-- GLOBAL LOADER -->
+    <div id="global-loader">
+        <img src="logo.png" alt="Logo" class="auth-logo" onerror="this.style.display='none'">
+        <div class="loader-spinner"></div>
+        <div style="color: var(--text-secondary); font-weight: 800; font-size: 13px; letter-spacing: 2px;">KTA WORKSPACE...</div>
+    </div>
+
     <!-- VIEW 1: AUTHENTICATION -->
-    <main id="view-auth" class="app-view active">
-        <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
-            <div class="glass-card" style="width: 100%; max-width: 420px;">
+    <main id="view-auth" class="app-view">
+        <div class="auth-container">
+            <div class="glass-card">
                 <div style="text-align: center; margin-bottom: 24px;">
-                    <img src="logo.png" alt="Logo" style="width: 64px; border-radius: 16px; margin-bottom: 12px;" onerror="this.style.display='none'">
+                    <img src="logo.png" alt="Logo" class="auth-logo" onerror="this.style.display='none'">
                     <h2 style="font-size: 22px; font-weight: 900;">KTA WORKSPACE</h2>
-                    <p style="font-size: 13px; color: var(--text-secondary);">Vui lòng đăng nhập để vào hệ thống</p>
+                    <p style="font-size: 13px; color: var(--text-secondary);">Hệ thống quản lý câu lạc bộ cầu lông</p>
                 </div>
 
                 <div class="auth-tabs">
@@ -64,14 +145,12 @@
                     <div class="auth-tab" onclick="KTA_App.Auth.switchTab('register')">ĐĂNG KÝ</div>
                 </div>
 
-                <!-- Form Login -->
                 <form id="form-login" class="auth-form active" onsubmit="KTA_App.Auth.login(event)">
                     <div class="form-group"><input type="tel" id="lgPhone" class="form-input" required placeholder=" "><label class="form-label">Số điện thoại</label></div>
                     <div class="form-group"><input type="password" id="lgPass" class="form-input" required placeholder=" "><label class="form-label">Mật khẩu</label></div>
                     <button type="submit" id="btnLogin" class="btn btn-primary">Đăng Nhập Ngay</button>
                 </form>
 
-                <!-- Form Register -->
                 <form id="form-register" class="auth-form" onsubmit="KTA_App.Auth.register(event)">
                     <div class="form-group"><input type="text" id="rgName" class="form-input" required placeholder=" "><label class="form-label">Họ và Tên</label></div>
                     <div class="form-group"><input type="tel" id="rgPhone" class="form-input" required placeholder=" "><label class="form-label">Số điện thoại</label></div>
@@ -84,41 +163,68 @@
 
     <!-- VIEW 2: GUEST PORTAL -->
     <main id="view-guest" class="app-view">
-        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border-light); padding-bottom: 16px;">
-                <h2 style="font-size: 20px; font-weight: 900; color: var(--accent-primary);">KTA Lông Thủ</h2>
+        <div class="user-container">
+            <header class="header-main">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="logo.png" alt="Logo" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">
+                    <span style="font-size: 18px; font-weight: 900; color: var(--accent-primary);">KTA Badminton</span>
+                </div>
                 <button class="btn btn-secondary" style="width:auto; padding:8px 16px; font-size:13px;" onclick="KTA_App.Auth.logout()">Đăng xuất</button>
-            </div>
+            </header>
             
-            <div style="background: var(--bg-surface-elevated); padding: 16px; border-radius: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+            <div class="glass-card" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                 <div>
                     <div style="color: var(--text-secondary); font-size: 13px;">Xin chào,</div>
-                    <div id="guestNameDisplay" style="font-size: 18px; font-weight: 800; color: white;">Khách hàng</div>
+                    <div id="guestNameDisplay" style="font-size: 18px; font-weight: 800; color: white;">Thành viên</div>
                 </div>
-                <button class="btn btn-primary" style="width:auto; padding:8px 16px; font-size:12px;" onclick="KTA_App.Guest.requestHost()">Xin quyền Host</button>
+                <button id="btnReqHost" class="btn btn-primary" style="width:auto; padding:10px 16px; font-size:12px;" onclick="KTA_App.Guest.requestHost()">🙋‍♂️ Xin quyền Host</button>
             </div>
 
-            <h3 style="font-size: 16px; margin-bottom: 16px;">Lịch Đặt Sân Hôm Nay</h3>
-            <div id="guestSessionList"></div>
+            <h3 style="font-size: 16px; margin-bottom: 16px; font-weight: 800;">Lịch Đặt Sân Hôm Nay</h3>
+            <div id="guestSessionList"><div style="text-align:center; padding:30px; color:var(--text-secondary);">Đang đồng bộ Data...</div></div>
         </div>
     </main>
 
     <!-- VIEW 3: HOST DASHBOARD -->
     <main id="view-host" class="app-view">
-        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border-light); padding-bottom: 16px;">
-                <h2 style="font-size: 20px; font-weight: 900; color: var(--accent-primary);">KTA Quản Trị (Host)</h2>
-                <button class="btn btn-secondary" style="width:auto; padding:8px 16px; font-size:13px;" onclick="KTA_App.Auth.logout()">Đăng xuất</button>
-            </div>
+        <div class="host-layout">
+            <nav class="host-sidebar">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px; padding: 0 4px;">
+                    <img src="logo.png" alt="Logo" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">
+                    <span style="font-size: 16px; font-weight: 900; color: var(--accent-primary);">KTA Enterprise</span>
+                </div>
+                <a class="nav-link active" onclick="KTA_App.Host.switchTab('htab-create', this)">📅 Tạo Lịch Sân</a>
+                <a class="nav-link" onclick="KTA_App.Host.switchTab('htab-manage', this); KTA_App.Host.fetchManageData();">🏸 Quản Lý Kèo</a>
+                <a class="nav-link" onclick="KTA_App.Host.switchTab('htab-crm', this); KTA_App.Host.loadCRM();">👥 Khách Hàng</a>
+                <div style="flex:1"></div>
+                <a class="nav-link" style="color: var(--danger);" onclick="KTA_App.Auth.logout()">🚪 Đăng Xuất</a>
+            </nav>
 
-            <div class="glass-card">
-                <h3 style="font-size: 18px; margin-bottom: 16px;">Tạo Kèo Nhanh</h3>
-                <form onsubmit="KTA_App.Host.createSession(event)">
-                    <div class="form-group"><input type="text" id="hcTime" class="form-input" required placeholder=" "><label class="form-label">Thời gian (VD: 19h T6)</label></div>
-                    <div class="form-group"><input type="text" id="hcLoc" class="form-input" required placeholder=" "><label class="form-label">Tên Sân Bãi</label></div>
-                    <div class="form-group"><input type="number" id="hcMax" class="form-input" required placeholder=" " value="8"><label class="form-label">Số người tối đa</label></div>
-                    <button type="submit" id="btnCreateSess" class="btn btn-primary">Tạo Lịch Sân Lên DB</button>
-                </form>
+            <div class="host-main">
+                <div id="htab-create" class="host-tab-pane active">
+                    <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 20px;">Tạo Lịch Đặt Sân Mới</h2>
+                    <div class="glass-card" style="max-width: 600px;">
+                        <form onsubmit="KTA_App.Host.createSession(event)">
+                            <div class="form-group"><input type="text" id="hcTime" class="form-input" required placeholder=" "><label class="form-label">Thời gian (VD: 19h - 22h T6)</label></div>
+                            <div class="form-group"><input type="text" id="hcLoc" class="form-input" required placeholder=" "><label class="form-label">Tên Sân Bãi</label></div>
+                            <div class="form-group"><input type="number" id="hcMax" class="form-input" required placeholder=" " value="8"><label class="form-label">Số slot tối đa</label></div>
+                            <button type="submit" id="btnCreateSess" class="btn btn-primary">Phát Kèo Lên Hệ Thống</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="htab-manage" class="host-tab-pane">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="font-size: 24px; font-weight: 900;">Quản Lý Kèo Đang Mở</h2>
+                        <button class="btn btn-secondary" style="width:auto; padding:8px 16px; font-size:13px;" onclick="KTA_App.Host.fetchManageData()">🔄 Làm mới</button>
+                    </div>
+                    <div id="hostManageList"><div style="text-align:center; padding:30px; color:var(--text-secondary);">Đang quét dữ liệu...</div></div>
+                </div>
+
+                <div id="htab-crm" class="host-tab-pane">
+                    <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 20px;">Dữ Liệu Thành Viên & Yêu Cầu Host</h2>
+                    <div id="customerCRMList"><div style="text-align:center; padding:30px; color:var(--text-secondary);">Đang đồng bộ CRM...</div></div>
+                </div>
             </div>
         </div>
     </main>
@@ -128,32 +234,44 @@
     <script>
         const KTA_App = {
             Config: {
-                // ĐIỀN LINK GOOGLE APPS SCRIPT WEB APP VÀO ĐÂY LÀ CHẠY
+                // SẾP DÁN LINK GOOGLE APPS SCRIPT WEB APP VÀO ĐÂY:
                 API_URL: 'https://script.google.com/macros/s/AKfycbzOZgNrN2ynajhIq-5HM1dp6SgoUhc353H8s3sjbGuajyYRj6AS2B6o5QJBhJCkjtg/exec'
             },
             State: { currentUser: null },
 
             Init: function() {
-                const savedUser = localStorage.getItem('kta_user_data_v2');
+                const savedUser = localStorage.getItem('kta_user_data_v4');
                 if (savedUser) {
-                    this.State.currentUser = JSON.parse(savedUser);
-                    this.routeUser();
+                    try {
+                        this.State.currentUser = JSON.parse(savedUser);
+                        this.routeUser();
+                    } catch(e) {
+                        this.Router.navigate('view-auth');
+                    }
                 } else {
                     this.Router.navigate('view-auth');
                 }
+
+                setTimeout(() => {
+                    const l = document.getElementById('global-loader');
+                    if(l) { l.style.opacity = '0'; setTimeout(() => l.style.display = 'none', 400); }
+                }, 400);
             },
 
             Router: {
                 navigate: function(id) {
                     document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-                    document.getElementById(id).classList.add('active');
+                    const target = document.getElementById(id);
+                    if(target) target.classList.add('active');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             },
 
             routeUser: function() {
                 if(!this.State.currentUser) return this.Router.navigate('view-auth');
-                if(this.State.currentUser.role === 'host') {
+                if(String(this.State.currentUser.role).toLowerCase() === 'host') {
                     this.Router.navigate('view-host');
+                    this.Host.fetchManageData();
                 } else {
                     this.Router.navigate('view-guest');
                     document.getElementById('guestNameDisplay').innerText = this.State.currentUser.name;
@@ -164,6 +282,7 @@
             UI: {
                 toast: function(type, msg) {
                     const c = document.getElementById('toast-container');
+                    if(!c) return;
                     const t = document.createElement('div');
                     t.className = `kta-toast ${type}`;
                     t.innerText = msg;
@@ -174,7 +293,6 @@
                 }
             },
 
-            // Đã fix lỗi trình duyệt chặn: Dùng mã hóa chuỗi cơ bản (Base64), không cần https
             hashPassword: function(message) {
                 return btoa(unescape(encodeURIComponent(message))); 
             },
@@ -183,7 +301,6 @@
                 execute: async function(action = null, payload = null) {
                     try {
                         const url = action ? `${KTA_App.Config.API_URL}?action=${action}` : KTA_App.Config.API_URL;
-                        // ĐÃ FIX LỖI CORS: Bổ sung Header text/plain cho POST Request của Google Apps Script
                         const options = payload ? { 
                             method: 'POST', 
                             redirect: 'follow', 
@@ -197,8 +314,7 @@
                         const text = await res.text();
                         return JSON.parse(text);
                     } catch (err) {
-                        console.error(err);
-                        return {status: 'error', msg: 'Không thể kết nối đến Database. Vui lòng kiểm tra mạng hoặc Link API!'};
+                        return {status: 'error', msg: 'Không thể kết nối đến Database Server!'};
                     }
                 }
             },
@@ -207,7 +323,6 @@
                 switchTab: function(type) {
                     document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
                     document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-                    
                     if(type === 'login') {
                         document.querySelectorAll('.auth-tab')[0].classList.add('active');
                         document.getElementById('form-login').classList.add('active');
@@ -216,21 +331,19 @@
                         document.getElementById('form-register').classList.add('active');
                     }
                 },
-
                 login: async function(e) {
                     e.preventDefault();
-                    const phone = document.getElementById('lgPhone').value.trim();
-                    const pass = document.getElementById('lgPass').value;
                     const btn = document.getElementById('btnLogin');
-                    
                     btn.innerText = 'Đang kiểm tra...'; btn.disabled = true;
-                    const hashedPass = KTA_App.hashPassword(pass);
 
-                    const res = await KTA_App.API.execute('login', { phone: phone, password: hashedPass });
+                    const res = await KTA_App.API.execute('login', { 
+                        phone: document.getElementById('lgPhone').value.trim(), 
+                        password: KTA_App.hashPassword(document.getElementById('lgPass').value) 
+                    });
                     
                     if (res.status === 'success') {
                         KTA_App.UI.toast('success', res.msg);
-                        localStorage.setItem('kta_user_data_v2', JSON.stringify(res.user));
+                        localStorage.setItem('kta_user_data_v4', JSON.stringify(res.user));
                         KTA_App.State.currentUser = res.user;
                         KTA_App.routeUser();
                     } else {
@@ -238,22 +351,20 @@
                     }
                     btn.innerText = 'Đăng Nhập Ngay'; btn.disabled = false;
                 },
-
                 register: async function(e) {
                     e.preventDefault();
-                    const name = document.getElementById('rgName').value.trim();
-                    const phone = document.getElementById('rgPhone').value.trim();
-                    const pass = document.getElementById('rgPass').value;
                     const btn = document.getElementById('btnRegister');
+                    btn.innerText = 'Đang tạo tài khoản...'; btn.disabled = true;
 
-                    btn.innerText = 'Đang tạo Database...'; btn.disabled = true;
-                    const hashedPass = KTA_App.hashPassword(pass);
-
-                    const res = await KTA_App.API.execute('register', { name: name, phone: phone, password: hashedPass });
+                    const res = await KTA_App.API.execute('register', { 
+                        name: document.getElementById('rgName').value.trim(), 
+                        phone: document.getElementById('rgPhone').value.trim(), 
+                        password: KTA_App.hashPassword(document.getElementById('rgPass').value) 
+                    });
                     
                     if (res.status === 'success') {
                         KTA_App.UI.toast('success', res.msg);
-                        localStorage.setItem('kta_user_data_v2', JSON.stringify(res.user));
+                        localStorage.setItem('kta_user_data_v4', JSON.stringify(res.user));
                         KTA_App.State.currentUser = res.user;
                         KTA_App.routeUser();
                     } else {
@@ -261,9 +372,8 @@
                     }
                     btn.innerText = 'Đăng Ký Tài Khoản'; btn.disabled = false;
                 },
-
                 logout: function() {
-                    localStorage.removeItem('kta_user_data_v2');
+                    localStorage.removeItem('kta_user_data_v4');
                     KTA_App.State.currentUser = null;
                     KTA_App.Router.navigate('view-auth');
                     KTA_App.UI.toast('success', 'Đã đăng xuất!');
@@ -274,52 +384,96 @@
                 fetchSessions: async function() {
                     const list = document.getElementById('guestSessionList');
                     list.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-secondary);">Đang đồng bộ Data...</div>`;
-                    
                     const res = await KTA_App.API.execute('getSessions');
                     if (res.status === 'success' && res.data && res.data.length > 0) {
                         list.innerHTML = res.data.reverse().map(s => `
-                            <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:12px; margin-bottom:12px; border: 1px solid var(--border-light);">
-                                <div style="font-weight:800; font-size:16px;">📍 ${s.Location}</div>
-                                <div style="font-size:13px; color:var(--text-secondary); margin-top:4px;">⏰ ${s.Time} | Host: ${s.Host}</div>
-                                <div style="font-size:12px; color:var(--accent-primary); margin-top:8px;">✅ Tối đa: ${s.Max} Slot</div>
+                            <div class="session-card">
+                                <div style="font-weight:900; color:white; font-size:16px;">📍 ${s.Location}</div>
+                                <div style="color:var(--text-secondary); margin-top:6px; font-size:13.5px;">⏰ ${s.Time} | Host: ${s.Host}</div>
+                                <div style="color:var(--accent-primary); margin-top:8px; font-size:12.5px; font-weight:700;">✅ Tối đa: ${s.Max} Slot</div>
                             </div>
                         `).join('');
                     } else {
-                        list.innerHTML = `<div style="text-align:center; padding:20px;">Hôm nay chưa có kèo nào lên sân.</div>`;
+                        list.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-secondary);">Chưa có kèo nào hôm nay.</div>`;
                     }
                 },
-                
                 requestHost: async function() {
-                    KTA_App.UI.toast('info', 'Đang gửi yêu cầu...');
+                    const btn = document.getElementById('btnReqHost');
+                    btn.innerText = 'Đang gửi...'; btn.disabled = true;
                     const res = await KTA_App.API.execute('requestHost', { phone: KTA_App.State.currentUser.phone });
-                    if (res.status === 'success') KTA_App.UI.toast('success', res.msg);
-                    else KTA_App.UI.toast('error', res.msg);
+                    if (res.status === 'success') {
+                        KTA_App.UI.toast('success', res.msg);
+                    } else {
+                        KTA_App.UI.toast('error', res.msg);
+                    }
+                    btn.innerText = '🙋‍♂️ Xin quyền Host'; btn.disabled = false;
                 }
             },
 
             Host: {
+                switchTab: function(id, el) {
+                    document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+                    el.classList.add('active');
+                    document.querySelectorAll('.host-tab-pane').forEach(p => p.classList.remove('active'));
+                    document.getElementById(id).classList.add('active');
+                },
                 createSession: async function(e) {
                     e.preventDefault();
                     const btn = document.getElementById('btnCreateSess');
                     btn.innerText = 'Đang đẩy lên DB...'; btn.disabled = true;
 
-                    const data = {
+                    const res = await KTA_App.API.execute('createSession', {
                         id: 'S_' + Date.now(),
                         host: KTA_App.State.currentUser.name,
                         time: document.getElementById('hcTime').value,
                         location: document.getElementById('hcLoc').value,
                         max: document.getElementById('hcMax').value
-                    };
+                    });
 
-                    const res = await KTA_App.API.execute('createSession', data);
                     if (res.status === 'success') {
                         KTA_App.UI.toast('success', res.msg);
                         e.target.reset();
                     } else {
                         KTA_App.UI.toast('error', res.msg);
                     }
-                    
-                    btn.innerText = 'Tạo Lịch Sân Lên DB'; btn.disabled = false;
+                    btn.innerText = 'Phát Kèo Lên Hệ Thống'; btn.disabled = false;
+                },
+                fetchManageData: async function() {
+                    const list = document.getElementById('hostManageList');
+                    list.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-secondary);">Đang quét dữ liệu...</div>`;
+                    const res = await KTA_App.API.execute('getSessions');
+                    if (res.status === 'success' && res.data && res.data.length > 0) {
+                        list.innerHTML = res.data.reverse().map(s => `
+                            <div class="manage-item">
+                                <div>
+                                    <div style="font-weight:800; color:white; font-size:15px; margin-bottom:4px;">📍 ${s.Location}</div>
+                                    <div style="font-size:13px; color:var(--text-secondary);">⏰ ${s.Time} | Host: ${s.Host}</div>
+                                </div>
+                                <span style="font-size:11px; font-weight:900; color:var(--accent-primary); background:rgba(16,185,129,0.1); padding:6px 12px; border-radius:8px;">${s.Status || 'OPEN'}</span>
+                            </div>
+                        `).join('');
+                    } else {
+                        list.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-secondary);">Chưa có lịch sân nào được tạo.</div>`;
+                    }
+                },
+                loadCRM: async function() {
+                    const crmList = document.getElementById('customerCRMList');
+                    crmList.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-secondary);">Đang đồng bộ CRM...</div>`;
+                    const users = await KTA_App.API.execute('getUsers');
+                    if (users && users.length > 0) {
+                        crmList.innerHTML = users.map(u => `
+                            <div class="manage-item" style="margin-bottom:12px;">
+                                <div>
+                                    <div style="font-weight:800; color:white; font-size:15px; margin-bottom:4px;">
+                                        ${u.Name} <span style="font-size:11px; color:var(--accent-secondary); background:rgba(59,130,246,0.15); padding:2px 8px; border-radius:6px; margin-left:6px;">${u.Role || 'user'}</span>
+                                    </div>
+                                    <div style="font-size:13px; color:var(--text-secondary);">📞 ${u.Phone} | Host Request: <b style="color:var(--warning);">${u.HostRequest || 'None'}</b></div>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        crmList.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-secondary);">Data CRM trống.</div>`;
+                    }
                 }
             }
         };
