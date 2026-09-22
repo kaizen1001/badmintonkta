@@ -63,6 +63,7 @@
         .btn:disabled { opacity: 0.6; pointer-events: none; }
         .btn-primary { background: var(--accent-primary); box-shadow: 0 4px 20px var(--accent-glow); }
         .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); color: white; }
+        .btn-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
 
         .form-group { position: relative; margin-bottom: 20px; }
         .form-input, .form-select {
@@ -90,7 +91,6 @@
         .user-container { max-width: 640px; margin: 0 auto; padding: 20px 16px 100px; }
         .header-main { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid var(--border-light); margin-bottom: 24px; }
         .session-card { background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; border-left: 4px solid var(--accent-primary); transition: 0.2s; }
-        .session-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
 
         /* HOST DASHBOARD CSS */
         .host-layout { display: flex; height: 100vh; overflow: hidden; }
@@ -107,7 +107,7 @@
             .host-layout { flex-direction: column; }
             .host-sidebar { width: 100%; height: 75px; flex-direction: row; justify-content: space-around; position: fixed; bottom: 0; z-index: 100; border-top: 1px solid var(--border-light); background: rgba(17,24,39,0.95); backdrop-filter: blur(15px); padding: 0; }
             .host-main { padding: 16px 16px 100px; }
-            .nav-link { flex-direction: column; gap: 4px; padding: 6px; font-size: 10px; width: 33%; text-align: center; border-left: none !important; }
+            .nav-link { flex-direction: column; gap: 4px; padding: 6px; font-size: 10px; width: 25%; text-align: center; border-left: none !important; }
         }
 
         /* TOAST & LOADER */
@@ -189,19 +189,20 @@
     <main id="view-host" class="app-view">
         <div class="host-layout">
             <nav class="host-sidebar">
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px; padding: 0 4px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px; padding: 0 4px;">
                     <img src="logo.png" alt="Logo" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">
-                    <span style="font-size: 16px; font-weight: 900; color: var(--accent-primary);">KTA Enterprise</span>
+                    <span style="font-size: 15px; font-weight: 900; color: var(--accent-primary);">KTA Enterprise</span>
                 </div>
-                <a class="nav-link active" onclick="KTA_App.Host.switchTab('htab-create', this)">📅 Phát Lịch Sân</a>
+                <a class="nav-link active" onclick="KTA_App.Host.switchTab('htab-create', this)">📅 Phát Lịch</a>
                 <a class="nav-link" onclick="KTA_App.Host.switchTab('htab-manage', this); KTA_App.Host.fetchManageData();">🏸 Quản Lý Kèo</a>
-                <a class="nav-link" onclick="KTA_App.Host.switchTab('htab-crm', this); KTA_App.Host.loadCRM();">👥 Khách Hàng</a>
+                <a class="nav-link" onclick="KTA_App.Host.switchTab('htab-slots', this); KTA_App.Host.fetchSlots();">📋 Duyệt Slot</a>
+                <a class="nav-link" onclick="KTA_App.Host.switchTab('htab-crm', this); KTA_App.Host.loadCRM();">👥 Thành Viên</a>
                 <div style="flex:1"></div>
                 <a class="nav-link" style="color: var(--danger);" onclick="KTA_App.Auth.logout()">🚪 Đăng Xuất</a>
             </nav>
 
             <div class="host-main">
-                <!-- Tab Tạo Kèo Sân -->
+                <!-- Tab Tạo Kèo -->
                 <div id="htab-create" class="host-tab-pane active">
                     <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 20px;">Phát Lịch Đặt Sân & Chi Tiết Kèo</h2>
                     <div class="glass-card" style="max-width: 620px;">
@@ -239,6 +240,15 @@
                     <div id="hostManageList"><div style="text-align:center; padding:30px; color:var(--text-secondary);">Đang quét dữ liệu...</div></div>
                 </div>
 
+                <!-- Tab Duyệt Slot -->
+                <div id="htab-slots" class="host-tab-pane">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="font-size: 24px; font-weight: 900;">Duyệt Slot Lông Thủ Đăng Ký</h2>
+                        <button class="btn btn-secondary" style="width:auto; padding:8px 16px; font-size:13px;" onclick="KTA_App.Host.fetchSlots()">🔄 Làm mới</button>
+                    </div>
+                    <div id="hostSlotList"><div style="text-align:center; padding:30px; color:var(--text-secondary);">Đang tải danh sách đăng ký...</div></div>
+                </div>
+
                 <!-- Tab CRM -->
                 <div id="htab-crm" class="host-tab-pane">
                     <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 20px;">Dữ Liệu Thành Viên & Yêu Cầu Host</h2>
@@ -253,13 +263,12 @@
     <script>
         const KTA_App = {
             Config: {
-                // SẾP DÁN LINK GOOGLE APPS SCRIPT WEB APP VÀO ĐÂY:
                 API_URL: 'https://script.google.com/macros/s/AKfycbzOZgNrN2ynajhIq-5HM1dp6SgoUhc353H8s3sjbGuajyYRj6AS2B6o5QJBhJCkjtg/exec'
             },
             State: { currentUser: null },
 
             Init: function() {
-                const savedUser = localStorage.getItem('kta_user_data_v5');
+                const savedUser = localStorage.getItem('kta_user_data_v6');
                 if (savedUser) {
                     try {
                         this.State.currentUser = JSON.parse(savedUser);
@@ -309,6 +318,17 @@
                     c.appendChild(t);
                     setTimeout(() => t.classList.add('show'), 20);
                     setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 3000);
+                }
+            },
+
+            formatDate: function(dateStr) {
+                if(!dateStr) return 'Hôm nay';
+                try {
+                    const d = new Date(dateStr);
+                    if(isNaN(d)) return dateStr;
+                    return d.toLocaleDateString('vi-VN');
+                } catch(e) {
+                    return dateStr;
                 }
             },
 
@@ -362,7 +382,7 @@
                     
                     if (res.status === 'success') {
                         KTA_App.UI.toast('success', res.msg);
-                        localStorage.setItem('kta_user_data_v5', JSON.stringify(res.user));
+                        localStorage.setItem('kta_user_data_v6', JSON.stringify(res.user));
                         KTA_App.State.currentUser = res.user;
                         KTA_App.routeUser();
                     } else {
@@ -383,7 +403,7 @@
                     
                     if (res.status === 'success') {
                         KTA_App.UI.toast('success', res.msg);
-                        localStorage.setItem('kta_user_data_v5', JSON.stringify(res.user));
+                        localStorage.setItem('kta_user_data_v6', JSON.stringify(res.user));
                         KTA_App.State.currentUser = res.user;
                         KTA_App.routeUser();
                     } else {
@@ -392,7 +412,7 @@
                     btn.innerText = 'Đăng Ký Tài Khoản'; btn.disabled = false;
                 },
                 logout: function() {
-                    localStorage.removeItem('kta_user_data_v5');
+                    localStorage.removeItem('kta_user_data_v6');
                     KTA_App.State.currentUser = null;
                     KTA_App.Router.navigate('view-auth');
                     KTA_App.UI.toast('success', 'Đã đăng xuất!');
@@ -409,7 +429,7 @@
                             <div class="session-card">
                                 <div style="font-weight:900; color:white; font-size:17px; margin-bottom:6px;">📍 ${s.Location}</div>
                                 <div style="display:grid; gap:4px; font-size:13.5px; color:var(--text-secondary); margin-bottom:12px;">
-                                    <div>📅 Ngày: <b style="color:white;">${s.Date || 'Hôm nay'}</b> | ⏰ Giờ: <b style="color:white;">${s.Time}</b></div>
+                                    <div>📅 Ngày: <b style="color:white;">${KTA_App.formatDate(s.Date)}</b> | ⏰ Giờ: <b style="color:white;">${s.Time}</b></div>
                                     <div>👑 Host: <b style="color:var(--accent-secondary);">${s.Host}</b> | 🏸 Loại cầu: <b style="color:white;">${s.Shuttlecock || 'VinaStar'}</b></div>
                                     <div>📊 Trình độ: <b style="color:var(--warning);">${s.ReqLevel || 'Mọi trình độ'}</b></div>
                                 </div>
@@ -489,13 +509,45 @@
                             <div class="manage-item">
                                 <div>
                                     <div style="font-weight:800; color:white; font-size:15px; margin-bottom:4px;">📍 ${s.Location}</div>
-                                    <div style="font-size:13px; color:var(--text-secondary);">📅 ${s.Date || 'Hôm nay'} | ⏰ ${s.Time} | Cầu: ${s.Shuttlecock || 'VinaStar'}</div>
+                                    <div style="font-size:13px; color:var(--text-secondary);">📅 ${KTA_App.formatDate(s.Date)} | ⏰ ${s.Time} | Cầu: ${s.Shuttlecock || 'VinaStar'}</div>
                                 </div>
                                 <span style="font-size:11px; font-weight:900; color:var(--accent-primary); background:rgba(16,185,129,0.1); padding:6px 12px; border-radius:8px;">${s.Status || 'OPEN'}</span>
                             </div>
                         `).join('');
                     } else {
                         list.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-secondary);">Chưa có lịch sân nào được tạo.</div>`;
+                    }
+                },
+                fetchSlots: async function() {
+                    const slotList = document.getElementById('hostSlotList');
+                    slotList.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-secondary);">Đang tải danh sách đăng ký...</div>`;
+                    const players = await KTA_App.API.execute('getPlayers');
+                    if (players && players.length > 0) {
+                        slotList.innerHTML = players.reverse().map(p => `
+                            <div class="manage-item" style="gap: 12px;">
+                                <div>
+                                    <div style="font-weight:800; color:white; font-size:15px; margin-bottom:4px;">
+                                        🏸 ${p.Name} <span style="font-size:11px; color:var(--text-secondary);">(${p.Phone})</span>
+                                    </div>
+                                    <div style="font-size:13px; color:var(--text-secondary);">Trạng thái: <b style="color:var(--warning);">${p.Status}</b></div>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-primary" style="width: auto; padding: 6px 12px; font-size: 12px;" onclick="KTA_App.Host.updateSlot('${p.PlayerID}', 'Đã duyệt')">Duyệt</button>
+                                    <button class="btn btn-danger" style="width: auto; padding: 6px 12px; font-size: 12px;" onclick="KTA_App.Host.updateSlot('${p.PlayerID}', 'Từ chối')">Từ chối</button>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        slotList.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-secondary);">Chưa có lông thủ nào đăng ký slot.</div>`;
+                    }
+                },
+                updateSlot: async function(playerId, status) {
+                    const res = await KTA_App.API.execute('updateSlotStatus', { playerId: playerId, status: status });
+                    if (res.status === 'success') {
+                        KTA_App.UI.toast('success', res.msg);
+                        KTA_App.Host.fetchSlots();
+                    } else {
+                        KTA_App.UI.toast('error', res.msg);
                     }
                 },
                 loadCRM: async function() {
