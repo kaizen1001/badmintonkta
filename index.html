@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>KTA Workspace | Quản Lý Kèo Cầu Lông Pro Max</title>
+    <title>KTA Workspace Pro Max | Hệ Thống Quản Lý Cáp Kèo & Vãng Lai</title>
     <link rel="icon" href="logo.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +14,7 @@
             --bg-body: #030712;
             --bg-surface: #111827;
             --bg-surface-elevated: #1f2937;
-            --bg-glass: rgba(17, 24, 39, 0.85);
+            --bg-glass: rgba(17, 24, 39, 0.88);
             --bg-glass-light: rgba(255, 255, 255, 0.05);
             
             --text-primary: #f9fafb;
@@ -25,9 +25,12 @@
             --accent-glow: rgba(16, 185, 129, 0.35);
             --accent-secondary: #3b82f6;
             --danger: #ef4444;
+            --warning: #f59e0b;
+            --purple: #8b5cf6;
             
             --border-light: rgba(255, 255, 255, 0.08);
             --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+            --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 20px;
             --radius-xl: 32px;
@@ -74,21 +77,23 @@
 
         .btn {
             display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            width: 100%; padding: 15px 20px; border-radius: var(--radius-md); border: none;
-            font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; color: white;
+            width: 100%; padding: 14px 20px; border-radius: var(--radius-md); border: none;
+            font-size: 14.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; color: white;
         }
         .btn:active { transform: scale(0.97); }
         .btn:disabled { opacity: 0.5; pointer-events: none; cursor: not-allowed; }
         .btn-primary { background: var(--accent-primary); box-shadow: 0 4px 20px var(--accent-glow); }
         .btn-secondary { background: var(--bg-glass-light); border: 1px solid var(--border-light); color: var(--text-primary); }
+        .btn-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.4); }
+        .btn-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.4); }
 
         .form-group { position: relative; margin-bottom: 20px; }
-        .form-input {
+        .form-input, .form-select {
             width: 100%; background: var(--bg-surface); border: 1px solid var(--border-light);
             padding: 16px; border-radius: var(--radius-md); color: var(--text-primary);
             font-size: 15px; outline: none; transition: 0.3s; font-family: var(--font-main);
         }
-        .form-input:focus { border-color: var(--accent-primary); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); background: rgba(16, 185, 129, 0.02); }
+        .form-input:focus, .form-select:focus { border-color: var(--accent-primary); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); background: rgba(16, 185, 129, 0.02); }
         .form-label {
             position: absolute; left: 16px; top: 16px; color: var(--text-secondary);
             font-size: 14px; pointer-events: none; transition: 0.3s;
@@ -105,7 +110,7 @@
         }
 
         /* GUEST VIEW */
-        .user-container { width: 100%; max-width: 560px; margin: 0 auto; padding: env(safe-area-inset-top) 16px 100px 16px; }
+        .user-container { width: 100%; max-width: 580px; margin: 0 auto; padding: env(safe-area-inset-top) 16px 100px 16px; }
         .header-main {
             display: flex; justify-content: space-between; align-items: center;
             padding: 18px 0; margin-bottom: 24px; border-bottom: 1px solid var(--border-light);
@@ -139,27 +144,13 @@
             box-shadow: 0 10px 30px rgba(255,255,255,0.2); border: none; cursor: pointer; z-index: 90; display: flex; gap: 8px; align-items: center;
         }
 
-        /* PIN VIEW */
-        #view-pin { display: flex; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle at center, #111827 0%, #030712 100%); }
-        .pin-wrapper { width: 100%; max-width: 340px; text-align: center; }
-        .pin-logo { width: 68px; height: 68px; margin-bottom: 20px; border-radius: 18px; box-shadow: 0 0 25px var(--accent-glow); }
-        .pin-dots-container { display: flex; justify-content: center; gap: 20px; margin-bottom: 36px; }
-        .pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--text-tertiary); transition: 0.2s; }
-        .pin-dot.filled { background: var(--text-primary); border-color: var(--text-primary); transform: scale(1.2); }
-        .pin-dot.error { background: var(--danger); border-color: var(--danger); animation: shake 0.4s; }
-        .numpad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 0 20px; }
-        .num-key { width: 72px; height: 72px; margin: 0 auto; border-radius: 50%; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.03); color: white; font-size: 26px; font-weight: 500; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        .num-key:active { background: rgba(255,255,255,0.2); transform: scale(0.9); }
-        .num-key.action-key { font-size: 13px; font-weight: 700; background: transparent; border: none; }
-        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
-
         /* HOST VIEW */
         #view-host .host-layout { display: flex; height: 100vh; overflow: hidden; }
         .host-sidebar { width: 260px; background: var(--bg-surface); border-right: 1px solid var(--border-light); display: flex; flex-direction: column; padding: 24px 16px; z-index: var(--z-nav); }
-        .host-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 36px; padding: 0 8px; font-size: 20px; font-weight: 800; }
-        .host-brand img { width: 36px; height: 36px; border-radius: 10px; }
-        .nav-link { display: flex; align-items: center; gap: 14px; padding: 14px 16px; margin-bottom: 8px; border-radius: var(--radius-md); color: var(--text-secondary); text-decoration: none; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.3s; }
-        .nav-link svg { width: 20px; height: 20px; }
+        .host-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; padding: 0 8px; font-size: 18px; font-weight: 800; }
+        .host-brand img { width: 34px; height: 34px; border-radius: 9px; }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 6px; border-radius: var(--radius-md); color: var(--text-secondary); text-decoration: none; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.3s; }
+        .nav-link svg { width: 18px; height: 18px; flex-shrink: 0; }
         .nav-link:hover { background: rgba(255,255,255,0.03); color: white; }
         .nav-link.active { background: rgba(16, 185, 129, 0.12); color: var(--accent-primary); }
         .host-main { flex: 1; padding: 32px; overflow-y: auto; background: var(--bg-body); }
@@ -170,18 +161,25 @@
             #view-host .host-layout { flex-direction: column; }
             .host-sidebar { width: 100%; height: 75px; flex-direction: row; justify-content: space-around; align-items: center; position: fixed; bottom: 0; left: 0; padding: 0; border-right: none; border-top: 1px solid var(--border-light); background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(15px); }
             .host-brand { display: none; }
-            .nav-link { flex-direction: column; gap: 4px; padding: 8px; font-size: 11px; margin: 0; border-radius: 0; }
+            .nav-link { flex-direction: column; gap: 4px; padding: 6px; font-size: 10px; margin: 0; border-radius: 0; }
             .nav-link.active { background: transparent; }
             .host-main { padding: 20px 16px 100px 16px; }
         }
 
         .manage-item { background: var(--bg-glass-light); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         
-        /* Player Card in Host Approval Modal */
-        .player-item {
+        .match-player-row {
             background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-light); padding: 14px;
             border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
         }
+        .set-counter-badge { display: flex; align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 10px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 700; color: #60a5fa; }
+        .set-btn { width: 28px; height: 28px; border-radius: 50%; background: var(--bg-surface-elevated); border: 1px solid var(--border-light); color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .set-btn:active { transform: scale(0.9); }
+
+        /* STATS CARDS */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--bg-glass); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 20px; }
+        .stat-value { font-size: 26px; font-weight: 900; color: var(--accent-primary); margin-top: 6px; }
 
         /* MODALS */
         .modal-overlay {
@@ -191,7 +189,7 @@
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal-box {
-            background: var(--bg-surface-elevated); width: 100%; max-width: 480px; max-height: 90vh;
+            background: var(--bg-surface-elevated); width: 100%; max-width: 560px; max-height: 90vh;
             overflow-y: auto; border-radius: var(--radius-xl); padding: 28px; position: relative;
             border: 1px solid var(--border-light); transform: scale(0.95) translateY(20px); transition: all 0.3s var(--ease-spring);
         }
@@ -201,7 +199,7 @@
             background: var(--bg-glass-light); border: none; color: white; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 10;
         }
 
-        .level-selection-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+        .level-selection-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
         .lvl-card { position: relative; background: var(--bg-glass-light); border: 1px solid var(--border-light); padding: 12px 14px 12px 44px; border-radius: var(--radius-md); cursor: pointer; }
         .lvl-card input[type="radio"] { position: absolute; opacity: 0; }
         .lvl-radio-custom { position: absolute; left: 14px; top: 16px; width: 18px; height: 18px; border: 2px solid var(--text-tertiary); border-radius: 50%; }
@@ -235,10 +233,10 @@
     <div id="global-loader">
         <img src="logo.png" alt="Logo" style="width: 68px; height: 68px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 0 20px var(--accent-glow);" onerror="this.style.display='none'">
         <div class="loader-spinner"></div>
-        <div style="color: var(--text-secondary); font-weight: 600; font-size: 12px; letter-spacing: 1px;">KTA WORKSPACE LOADING...</div>
+        <div style="color: var(--text-secondary); font-weight: 600; font-size: 12px; letter-spacing: 1px;">KTA WORKSPACE PRO MAX LOADING...</div>
     </div>
 
-    <!-- VIEW 1: GUEST -->
+    <!-- VIEW 1: GUEST / LÔNG THỦ -->
     <main id="view-guest" class="app-view">
         <div class="user-container">
             <header class="header-main">
@@ -264,121 +262,124 @@
             <div style="height: 40px;"></div>
         </div>
 
-        <button class="fab-host ripple" onclick="KTA_App.Router.navigate('view-pin')">
+        <button class="fab-host ripple" onclick="KTA_App.HostAuth.promptLogin()">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            Quản trị Host
+            Quản Trị Host
         </button>
     </main>
 
-    <!-- VIEW 2: PIN CODE -->
-    <section id="view-pin" class="app-view">
-        <div class="pin-wrapper">
-            <img src="logo.png" alt="Lock" class="pin-logo" onerror="this.style.display='none'">
-            <div style="font-size: 14px; font-weight: 700; letter-spacing: 2px; margin-bottom: 24px; color: var(--text-secondary);">NHẬP MÃ BẢO MẬT HOST</div>
-            
-            <div class="pin-dots-container">
-                <div class="pin-dot" id="dot-1"></div><div class="pin-dot" id="dot-2"></div>
-                <div class="pin-dot" id="dot-3"></div><div class="pin-dot" id="dot-4"></div>
-            </div>
-
-            <div class="numpad-grid">
-                <button class="num-key ripple" onclick="KTA_App.Security.pressDigit(1)">1</button>
-                <button class="num-key ripple" onclick="KTA_App.Security.pressDigit(2)">2</button>
-                <button class="num-key ripple" onclick="KTA_App.Security.pressDigit(3)">3</button>
-                <button class="num-key ripple" onclick="KTA_App.Security.pressDigit(4)">4</button>
-                <button class="num-key ripple" onclick="KTA_App.Security.pressDigit(5)">5</button>
-                <button class="num-key ripple" onclick="KTA_App.Security.pressDigit(6)">6</button>
-                <button class="num-key ripple" onclick="KTA_App.Security.pressDigit(7)">7</button>
-                <button class="num-key ripple" onclick="KTA_App.Security.pressDigit(8)">8</button>
-                <button class="num-key ripple" onclick="KTA_App.Security.pressDigit(9)">9</button>
-                <button class="num-key action-key ripple" onclick="KTA_App.Router.navigate('view-guest')" style="color: var(--text-secondary);">THOÁT</button>
-                <button class="num-key ripple" onclick="KTA_App.Security.pressDigit(0)">0</button>
-                <button class="num-key action-key ripple" onclick="KTA_App.Security.deleteDigit()">XÓA</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- VIEW 3: HOST DASHBOARD -->
+    <!-- VIEW 3: HOST DASHBOARD (SOFTWARE QUẢN LÝ SÂN VÀ VÃNG LAI) -->
     <section id="view-host" class="app-view">
         <div class="host-layout">
             <nav class="host-sidebar">
                 <div class="host-brand">
                     <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
-                    <span>KTA Host</span>
+                    <span>KTA Pro Host</span>
                 </div>
                 
                 <a class="nav-link active ripple" onclick="KTA_App.Host.switchTab('htab-create', this)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>
-                    <span>Phát Kèo Đấu</span>
+                    <span>Phát Lịch Đặt Sân</span>
                 </a>
                 <a class="nav-link ripple" onclick="KTA_App.Host.switchTab('htab-manage', this); KTA_App.Host.fetchManageData();">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line></svg>
-                    <span>Quản Lý Kèo & Slot</span>
+                    <span>Quản Lý Kèo & Set Đánh</span>
                 </a>
-                <a class="nav-link ripple" onclick="KTA_App.Host.switchTab('htab-finance', this)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                    <span>Chia Bill & VietQR</span>
+                <a class="nav-link ripple" onclick="KTA_App.Host.switchTab('htab-pos', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                    <span>Bán Dịch Vụ (POS)</span>
+                </a>
+                <a class="nav-link ripple" onclick="KTA_App.Host.switchTab('htab-stats', this); KTA_App.Host.loadStats();">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21H3V3"></path><path d="M21 9l-7 7-5-5-5 5"></path></svg>
+                    <span>Doanh Thu & CRM</span>
                 </a>
                 
                 <div style="flex:1"></div>
                 
-                <a class="nav-link ripple" onclick="KTA_App.Security.lockSystem()" style="color: var(--danger);">
+                <a class="nav-link ripple" onclick="KTA_App.HostAuth.logout()" style="color: var(--danger);">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                    <span>Khóa Panel</span>
+                    <span>Đăng Xuất</span>
                 </a>
             </nav>
 
             <main class="host-main">
-                <!-- TAB 1: TẠO KÈO -->
+                <!-- TAB 1: PHÁT LỊCH ĐẶT SÂN -->
                 <div id="htab-create" class="host-tab-pane active">
                     <div style="max-width: 600px; margin: 0 auto;">
-                        <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 24px;">Phát Lịch Đánh Mới</h2>
+                        <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 24px;">Phát Lịch Đặt Sân & Cáp Kèo</h2>
                         <div class="glass-card">
                             <form onsubmit="KTA_App.Host.submitSession(event)">
                                 <div class="form-group"><input type="text" id="hcTime" class="form-input" placeholder=" " required><label class="form-label">Thời gian (VD: 19:00 - 22:00 | T6)</label></div>
-                                <div class="form-group"><input type="text" id="hcLoc" class="form-input" placeholder=" " required><label class="form-label">Tên Sân & Vị trí</label></div>
+                                <div class="form-group"><input type="text" id="hcLoc" class="form-input" placeholder=" " required><label class="form-label">Tên Sân & Địa điểm</label></div>
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                                    <div class="form-group"><select id="hcShuttle" class="form-input" required><option>VinaStar</option><option>Thành Công</option><option>Khác</option></select><label class="form-label" style="top:-10px; left:12px; font-size:12px; background:var(--bg-surface);">Loại cầu</label></div>
-                                    <div class="form-group"><input type="number" id="hcMax" class="form-input" placeholder=" " value="8" required><label class="form-label">Số Slot Max</label></div>
+                                    <div class="form-group"><select id="hcShuttle" class="form-select" required><option>VinaStar</option><option>Thành Công</option><option>Khác</option></select><label class="form-label" style="top:-10px; left:12px; font-size:12px; background:var(--bg-surface);">Loại cầu</label></div>
+                                    <div class="form-group"><input type="number" id="hcMax" class="form-input" placeholder=" " value="8" required><label class="form-label">Số Slot Tối Đa</label></div>
                                 </div>
                                 <div class="form-group"><input type="text" id="hcLevel" class="form-input" placeholder=" " value="Từ Lvl 3 (TB Yếu) trở lên" required><label class="form-label">Yêu cầu Trình độ</label></div>
-                                <button type="submit" id="btnHostSubmit" class="btn btn-primary ripple">Phát Kèo Lên Trang Chủ</button>
+                                <button type="submit" id="btnHostSubmit" class="btn btn-primary ripple">Tạo Lịch Đặt Sân Ngay</button>
                             </form>
                         </div>
                     </div>
                 </div>
 
-                <!-- TAB 2: QUẢN LÝ KÈO & DUYỆT SLOT -->
+                <!-- TAB 2: QUẢN LÝ KÈO & SET ĐÁNH -->
                 <div id="htab-manage" class="host-tab-pane">
                     <div style="max-width: 800px; margin: 0 auto;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                            <h2 style="font-size: 22px; font-weight: 800;">Quản Lý Kèo & Duyệt Slot</h2>
+                            <h2 style="font-size: 22px; font-weight: 800;">Quản Lý Tình Trạng Sân & Set Đánh</h2>
                             <button class="btn btn-secondary ripple" style="width: auto; padding: 8px 14px; font-size: 13px; border-radius: var(--radius-pill);" onclick="KTA_App.Host.fetchManageData()">Làm mới</button>
                         </div>
                         <div class="glass-card"><div id="hostManageList"><div style="text-align:center; padding:20px;">Đang tải...</div></div></div>
                     </div>
                 </div>
 
-                <!-- TAB 3: MÁY TÍNH TIỀN & VIETQR -->
-                <div id="htab-finance" class="host-tab-pane">
-                    <div style="max-width: 520px; margin: 0 auto;">
-                        <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 24px;">Máy Tính Bill & VietQR</h2>
+                <!-- TAB 3: BÁN DỊCH VỤ / POS -->
+                <div id="htab-pos" class="host-tab-pane">
+                    <div style="max-width: 600px; margin: 0 auto;">
+                        <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 24px;">Bán Dịch Vụ Sân Nhanh (POS)</h2>
                         <div class="glass-card">
-                            <div class="form-group"><input type="number" id="fCourt" class="form-input" placeholder=" " oninput="KTA_App.Host.calculateBill()"><label class="form-label">Tiền Sân (VNĐ)</label></div>
-                            <div class="form-group"><input type="number" id="fShuttle" class="form-input" placeholder=" " oninput="KTA_App.Host.calculateBill()"><label class="form-label">Tiền Cầu (VNĐ)</label></div>
-                            <div class="form-group"><input type="number" id="fPeople" class="form-input" placeholder=" " oninput="KTA_App.Host.calculateBill()"><label class="form-label">Số lông thủ share bill</label></div>
-                            
-                            <div style="background: rgba(0,0,0,0.4); border: 1px dashed var(--accent-primary); border-radius: var(--radius-md); padding: 18px; text-align: center; margin-top: 16px;">
-                                <div style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Mỗi người thanh toán (Đã làm tròn)</div>
-                                <div id="fResultText" style="font-size: 32px; font-weight: 900; color: var(--accent-primary); margin: 6px 0;">0 ₫</div>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 20px;">
+                                <button class="btn btn-secondary ripple" onclick="KTA_App.Host.addItemPOS('Nước suối', 10000)">💧 Nước Suối (10k)</button>
+                                <button class="btn btn-secondary ripple" onclick="KTA_App.Host.addItemPOS('Nước ngọt Stings/Pepsi', 15000)">⚡ Nước Ngọt (15k)</button>
+                                <button class="btn btn-secondary ripple" onclick="KTA_App.Host.addItemPOS('Ống cầu VinaStar', 220000)">🏸 Ống Cầu VinaStar (220k)</button>
+                                <button class="btn btn-secondary ripple" onclick="KTA_App.Host.addItemPOS('Bánh snack/ăn vặt', 15000)">🍪 Snack (15k)</button>
                             </div>
+                            <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 16px;">
+                                <h3 style="font-size: 14px; margin-bottom: 10px; color: var(--text-secondary);">Giỏ hàng dịch vụ phát sinh:</h3>
+                                <div id="posCartList" style="font-size: 14px; margin-bottom: 14px; color: white;">Chưa có món nào được chọn.</div>
+                                <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 16px; border-top: 1px solid var(--border-light); padding-top: 10px;">
+                                    <span>Tổng tiền dịch vụ:</span>
+                                    <span id="posTotal" style="color: var(--accent-primary);">0 ₫</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                            <div style="margin-top: 24px; border-top: 1px solid var(--border-light); padding-top: 20px;">
-                                <h3 style="font-size: 15px; margin-bottom: 12px; color: var(--accent-secondary);">Tạo VietQR Chuyển Khoản</h3>
-                                <div class="form-group"><input type="text" id="qrBankId" class="form-input" placeholder=" " value="MB"><label class="form-label">Mã Ngân Hàng (VD: MB, VCB...)</label></div>
-                                <div class="form-group"><input type="text" id="qrAccNo" class="form-input" placeholder=" "><label class="form-label">Số Tài Khoản</label></div>
-                                <button class="btn btn-primary ripple" onclick="KTA_App.Host.generateQR()">Hiển Thị Mã QR Thanh Toán</button>
-                                <div id="qrImageContainer" style="text-align: center; margin-top: 16px;"></div>
+                <!-- TAB 4: THỐNG KÊ DOANH THU & CRM KHÁCH HÀNG -->
+                <div id="htab-stats" class="host-tab-pane">
+                    <div style="max-width: 800px; margin: 0 auto;">
+                        <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 24px;">Thống Kê Doanh Thu & Quản Lý Khách Hàng</h2>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div style="color: var(--text-secondary); font-size: 13px;">Tổng Lịch Đặt</div>
+                                <div class="stat-value" id="statSessionsCount">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <div style="color: var(--text-secondary); font-size: 13px;">Tổng Khách Hàng</div>
+                                <div class="stat-value" id="statUsersCount">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <div style="color: var(--text-secondary); font-size: 13px;">Khách Cố Định / Lẻ</div>
+                                <div class="stat-value" id="statCustomerTypes" style="font-size: 20px;">0 / 0</div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card">
+                            <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--accent-secondary);">Danh Sách Khách Hàng Đã Lưu (CRM)</h3>
+                            <div id="customerCRMList">
+                                <div style="text-align: center; color: var(--text-secondary); padding: 20px;">Đang tải danh sách khách hàng...</div>
                             </div>
                         </div>
                     </div>
@@ -391,14 +392,35 @@
     <div id="modalProfile" class="modal-overlay">
         <div class="modal-box">
             <button class="btn-close-modal" onclick="KTA_App.Modals.close('modalProfile')">×</button>
-            <h2 style="font-size: 18px; font-weight: 800; margin-bottom: 20px;">Cập Nhật Hồ Sơ Lông Thủ</h2>
+            <h2 style="font-size: 18px; font-weight: 800; margin-bottom: 20px;">Hồ Sơ & Phân Loại Lông Thủ</h2>
             <form onsubmit="KTA_App.Guest.saveProfile(event)">
                 <div class="form-group"><input type="text" id="pName" class="form-input" placeholder=" " required><label class="form-label">Tên gọi trên sân</label></div>
                 <div class="form-group"><input type="tel" id="pPhone" class="form-input" placeholder=" " required><label class="form-label">Số điện thoại liên hệ</label></div>
+                
+                <div class="form-group">
+                    <select id="pType" class="form-select">
+                        <option value="Khách lẻ">Khách Lẻ (Vãng lai)</option>
+                        <option value="Khách cố định">Khách Cố Định (Thành viên tháng)</option>
+                    </select>
+                    <label class="form-label" style="top:-10px; left:12px; font-size:12px; background:var(--bg-surface-elevated);">Loại khách hàng</label>
+                </div>
+
                 <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px;">Trình độ bản thân:</div>
                 <div class="level-selection-grid" id="pLevelGrid"></div>
                 <button type="submit" id="btnSaveProfile" class="btn btn-primary ripple">Lưu Thông Tin</button>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL ĐĂNG NHẬP HOST -->
+    <div id="modalHostLogin" class="modal-overlay">
+        <div class="modal-box" style="max-width: 400px; text-align: center;">
+            <button class="btn-close-modal" onclick="KTA_App.Modals.close('modalHostLogin')">×</button>
+            <img src="logo.png" alt="Logo" style="width: 56px; height: 56px; border-radius: 14px; margin-bottom: 16px; box-shadow: 0 0 20px var(--accent-glow);" onerror="this.style.display='none'">
+            <h2 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">Đăng Nhập Quản Trị Host</h2>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">Nhập SĐT tài khoản được phân quyền Host trên hệ thống.</p>
+            <div class="form-group" style="text-align: left;"><input type="tel" id="loginHostPhone" class="form-input" placeholder=" " required><label class="form-label">Số điện thoại Host</label></div>
+            <button class="btn btn-primary ripple" onclick="KTA_App.HostAuth.verifyLogin()">Truy Cập Phần Mềm</button>
         </div>
     </div>
 
@@ -414,16 +436,16 @@
                     <div>🏸 Loại cầu: <span id="dShuttle" style="color:white; font-weight:600;"></span></div>
                     <div>📊 Trình độ: <span id="dLevel" style="color:white; font-weight:600;"></span></div>
                 </div>
-                <button id="btnJoinSlot" class="btn btn-primary ripple" onclick="KTA_App.Guest.requestJoin()">Gửi Yêu Cầu Xin Slot Ngay</button>
+                <button id="btnJoinSlot" class="btn btn-primary ripple" onclick="KTA_App.Guest.requestJoin()">Đăng Ký Đặt Lịch Sân</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DUYỆT SLOT DÀNH CHO HOST (QUAN TRỌNG) -->
+    <!-- MODAL QUẢN LÝ TRẬN ĐẤU & SET ĐÁNH -->
     <div id="modalManagePlayers" class="modal-overlay">
-        <div class="modal-box">
+        <div class="modal-box" style="max-width: 620px;">
             <button class="btn-close-modal" onclick="KTA_App.Modals.close('modalManagePlayers')">×</button>
-            <h2 style="font-size: 18px; font-weight: 800; margin-bottom: 4px;">Danh Sách Lông Thủ Xin Slot</h2>
+            <h2 style="font-size: 18px; font-weight: 800; margin-bottom: 4px;">Quản Lý Tình Trạng Lông Thủ & Số Set Đánh</h2>
             <p id="mLocText" style="color: var(--accent-secondary); font-size: 13px; font-weight: 600; margin-bottom: 16px;"></p>
             <div id="managePlayersListContainer">
                 <div style="text-align: center; color: var(--text-secondary); padding: 20px;">Đang quét danh sách...</div>
@@ -437,7 +459,6 @@
         const KTA_App = {
             Config: {
                 API_URL: 'https://script.google.com/macros/s/AKfycbzOZgNrN2ynajhIq-5HM1dp6SgoUhc353H8s3sjbGuajyYRj6AS2B6o5QJBhJCkjtg/exec',
-                PIN_CODE: '2026',
                 Levels: [
                     { val: 'Lvl 1 - Newbie', desc: 'Mới cầm vợt, chưa rõ luật.' },
                     { val: 'Lvl 2 - Yếu', desc: 'Phông chưa tới, di chuyển chậm.' },
@@ -447,7 +468,7 @@
                     { val: 'Lvl 6 - TB Cộng', desc: 'Linh hoạt, đập cắm, tạt gắt.' }
                 ]
             },
-            State: { currentUser: null, rawSessions: [], selectedSessionId: null, pinInputBuffer: '' },
+            State: { currentUser: null, rawSessions: [], selectedSessionId: null, posCart: [] },
 
             Init: function() {
                 const gridLvl = document.getElementById('pLevelGrid');
@@ -470,7 +491,7 @@
                     } catch(e) {}
                 }
 
-                if (sessionStorage.getItem('kta_host_auth_token') === 'true') {
+                if (sessionStorage.getItem('kta_host_logged_in') === 'true') {
                     this.Router.navigate('view-host');
                     this.Host.fetchManageData();
                 } else {
@@ -483,7 +504,7 @@
                     const l = document.getElementById('global-loader');
                     l.style.opacity = '0';
                     setTimeout(() => l.style.display = 'none', 400);
-                }, 600);
+                }, 500);
             },
 
             Router: {
@@ -520,12 +541,42 @@
                 }
             },
 
+            HostAuth: {
+                promptLogin: () => KTA_App.Modals.open('modalHostLogin'),
+                verifyLogin: async function() {
+                    const phone = document.getElementById('loginHostPhone').value.trim();
+                    if (!phone) return KTA_App.UI.toast('error', 'Vui lòng nhập SĐT!');
+                    try {
+                        const users = await KTA_App.API.execute('getUsers');
+                        const matched = users.find(u => String(u.Phone) === phone);
+                        if (matched && String(matched.Role).toLowerCase() === 'host') {
+                            sessionStorage.setItem('kta_host_logged_in', 'true');
+                            sessionStorage.setItem('kta_host_name', matched.Name);
+                            KTA_App.Modals.close('modalHostLogin');
+                            KTA_App.Router.navigate('view-host');
+                            KTA_App.Host.fetchManageData();
+                            KTA_App.UI.toast('success', `Chào Host ${matched.Name}!`);
+                        } else {
+                            KTA_App.UI.toast('error', 'SĐT này chưa được phân quyền Host!');
+                        }
+                    } catch(e) {
+                        KTA_App.UI.toast('error', 'Lỗi xác thực quyền!');
+                    }
+                },
+                logout: function() {
+                    sessionStorage.removeItem('kta_host_logged_in');
+                    KTA_App.Router.navigate('view-guest');
+                    KTA_App.UI.toast('success', 'Đã đăng xuất Host.');
+                }
+            },
+
             Guest: {
                 fillProfileForm: function() {
                     const u = KTA_App.State.currentUser;
                     if(!u) return;
                     document.getElementById('pName').value = u.name || '';
                     document.getElementById('pPhone').value = u.phone || '';
+                    if(u.type) document.getElementById('pType').value = u.type;
                     document.querySelectorAll('input[name="profileLevel"]').forEach(r => { if(r.value === u.level) r.checked = true; });
                 },
 
@@ -538,6 +589,7 @@
                         id: KTA_App.State.currentUser ? KTA_App.State.currentUser.id : 'U_' + Date.now(),
                         name: document.getElementById('pName').value.trim(),
                         phone: document.getElementById('pPhone').value.trim(),
+                        type: document.getElementById('pType').value,
                         level: document.querySelector('input[name="profileLevel"]:checked').value,
                         role: 'user'
                     };
@@ -558,7 +610,7 @@
 
                 fetchSessions: async function() {
                     const list = document.getElementById('guestSessionList');
-                    list.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-secondary);">Đang quét dữ liệu...</div>`;
+                    list.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-secondary);">Đang quét lịch đặt sân...</div>`;
                     try {
                         const data = await KTA_App.API.execute();
                         KTA_App.State.rawSessions = data ? data.reverse() : [];
@@ -571,7 +623,7 @@
                 renderSessions: function(arr) {
                     const list = document.getElementById('guestSessionList');
                     if (!arr || arr.length === 0) {
-                        list.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-secondary);">Chưa có kèo nào được tạo.</div>`;
+                        list.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-secondary);">Chưa có lịch đặt sân nào.</div>`;
                         return;
                     }
                     list.innerHTML = '';
@@ -609,13 +661,6 @@
 
                     const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(s.Location + " sân cầu lông")}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
                     document.getElementById('modalMapArea').innerHTML = `<iframe src="${mapUrl}"></iframe>`;
-
-                    const btn = document.getElementById('btnJoinSlot');
-                    if(String(s.Status).toUpperCase() === 'FULL') {
-                        btn.disabled = true; btn.className = 'btn btn-secondary'; btn.innerText = 'Kèo đã đầy!';
-                    } else {
-                        btn.disabled = false; btn.className = 'btn btn-primary ripple'; btn.innerText = 'Gửi Yêu Cầu Xin Slot Ngay';
-                    }
                     KTA_App.Modals.open('modalSessionDetail');
                 },
 
@@ -626,7 +671,7 @@
                         return;
                     }
                     const btn = document.getElementById('btnJoinSlot');
-                    btn.disabled = true; btn.innerText = 'Đang gửi...';
+                    btn.disabled = true; btn.innerText = 'Đang đặt lịch...';
                     try {
                         await KTA_App.API.execute('joinSlot', {
                             sessionId: KTA_App.State.selectedSessionId,
@@ -635,50 +680,12 @@
                             level: KTA_App.State.currentUser.level
                         });
                         KTA_App.Modals.close('modalSessionDetail');
-                        KTA_App.UI.toast('success', 'Đã gửi yêu cầu xin slot cho Host thành công!');
+                        KTA_App.UI.toast('success', 'Đã đặt lịch thành công!');
                     } catch(err) {
-                        KTA_App.UI.toast('error', 'Lỗi khi xin slot!');
+                        KTA_App.UI.toast('error', 'Lỗi khi đặt lịch!');
                     } finally {
-                        btn.disabled = false; btn.innerText = 'Gửi Yêu Cầu Xin Slot Ngay';
+                        btn.disabled = false; btn.innerText = 'Đăng Ký Đặt Lịch Sân';
                     }
-                }
-            },
-
-            Security: {
-                pressDigit: function(n) {
-                    if (KTA_App.State.pinInputBuffer.length < 4) {
-                        KTA_App.State.pinInputBuffer += n;
-                        this.updateDots();
-                        if (KTA_App.State.pinInputBuffer.length === 4) this.verify();
-                    }
-                },
-                deleteDigit: function() {
-                    KTA_App.State.pinInputBuffer = KTA_App.State.pinInputBuffer.slice(0, -1);
-                    this.updateDots();
-                },
-                updateDots: function() {
-                    const l = KTA_App.State.pinInputBuffer.length;
-                    for(let i=1; i<=4; i++) {
-                        document.getElementById(`dot-${i}`).className = 'pin-dot' + (i <= l ? ' filled' : '');
-                    }
-                },
-                verify: function() {
-                    if (KTA_App.State.pinInputBuffer === KTA_App.Config.PIN_CODE) {
-                        sessionStorage.setItem('kta_host_auth_token', 'true');
-                        KTA_App.State.pinInputBuffer = ''; this.updateDots();
-                        KTA_App.Router.navigate('view-host');
-                        KTA_App.Host.fetchManageData();
-                        KTA_App.UI.toast('success', 'Mở khóa thành công!');
-                    } else {
-                        const w = document.querySelector('.pin-wrapper');
-                        w.classList.add('shake');
-                        document.querySelectorAll('.pin-dot').forEach(d => d.classList.add('error'));
-                        setTimeout(() => { w.classList.remove('shake'); KTA_App.State.pinInputBuffer = ''; this.updateDots(); }, 400);
-                    }
-                },
-                lockSystem: function() {
-                    sessionStorage.removeItem('kta_host_auth_token');
-                    KTA_App.Router.navigate('view-guest');
                 }
             },
 
@@ -693,11 +700,12 @@
                 submitSession: async function(e) {
                     e.preventDefault();
                     const btn = document.getElementById('btnHostSubmit');
-                    btn.innerText = 'Đang phát kèo...'; btn.disabled = true;
+                    btn.innerText = 'Đang phát lịch...'; btn.disabled = true;
 
+                    const hostName = sessionStorage.getItem('kta_host_name') || 'Host KTA';
                     const data = {
                         id: 'S_' + Date.now(),
-                        host: KTA_App.State.currentUser ? KTA_App.State.currentUser.name : 'Kim Tuấn An (Host)',
+                        host: hostName,
                         time: document.getElementById('hcTime').value.trim(),
                         location: document.getElementById('hcLoc').value.trim(),
                         shuttlecock: document.getElementById('hcShuttle').value,
@@ -708,23 +716,23 @@
 
                     try {
                         await KTA_App.API.execute('createSession', data);
-                        KTA_App.UI.toast('success', 'Đã phát kèo thành công!');
+                        KTA_App.UI.toast('success', 'Đã tạo lịch đặt sân thành công!');
                         e.target.reset();
                         setTimeout(() => document.querySelectorAll('.nav-link')[1].click(), 800);
                     } catch(err) {
-                        KTA_App.UI.toast('error', 'Lỗi phát kèo!');
+                        KTA_App.UI.toast('error', 'Lỗi tạo lịch!');
                     } finally {
-                        btn.innerText = 'Phát Kèo Lên Trang Chủ'; btn.disabled = false;
+                        btn.innerText = 'Tạo Lịch Đặt Sân Ngay'; btn.disabled = false;
                     }
                 },
 
                 fetchManageData: async function() {
                     const list = document.getElementById('hostManageList');
-                    list.innerHTML = `<div style="text-align:center; padding:20px;">Đang tải danh sách...</div>`;
+                    list.innerHTML = `<div style="text-align:center; padding:20px;">Đang tải danh sách sân...</div>`;
                     try {
                         const data = await KTA_App.API.execute();
                         if(!data || data.length === 0) {
-                            list.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-secondary);">Chưa có kèo nào.</div>`;
+                            list.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-secondary);">Chưa có lịch đặt sân.</div>`;
                             return;
                         }
                         list.innerHTML = '';
@@ -737,38 +745,50 @@
                                     </div>
                                     <div style="display:flex; align-items:center; gap:8px;">
                                         <span style="font-size:11px; font-weight:800; color:var(--accent-primary); background:rgba(16,185,129,0.1); padding:4px 8px; border-radius:6px;">${s.Status}</span>
-                                        <button class="btn btn-secondary ripple" style="width:auto; padding:6px 12px; font-size:12px;" onclick="KTA_App.Host.openPlayers('${s.ID}', '${s.Location}')">Duyệt Slot</button>
+                                        <button class="btn btn-secondary ripple" style="width:auto; padding:6px 12px; font-size:12px;" onclick="KTA_App.Host.openPlayers('${s.ID}', '${s.Location}')">Quản Lý Set & Thanh Toán</button>
                                     </div>
                                 </div>`;
                         });
                     } catch(e) {
-                        list.innerHTML = `<div style="text-align:center; color:var(--danger);">Lỗi tải kèo!</div>`;
+                        list.innerHTML = `<div style="text-align:center; color:var(--danger);">Lỗi tải dữ liệu!</div>`;
                     }
                 },
 
                 openPlayers: async function(sessionId, loc) {
                     document.getElementById('mLocText').innerText = `Sân: ${loc}`;
                     const container = document.getElementById('managePlayersListContainer');
-                    container.innerHTML = `<div style="text-align:center; padding:20px;">Đang quét danh sách người đăng ký...</div>`;
+                    container.innerHTML = `<div style="text-align:center; padding:20px;">Đang quét danh sách...</div>`;
                     KTA_App.Modals.open('modalManagePlayers');
 
                     try {
                         const players = await KTA_App.API.execute(`getPlayers&sessionId=${sessionId}`);
                         if(!players || players.length === 0) {
-                            container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-secondary);">Chưa có lông thủ nào đăng ký kèo này.</div>`;
+                            container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-secondary);">Chưa có lông thủ nào đặt lịch sân này.</div>`;
                             return;
                         }
                         container.innerHTML = '';
                         players.forEach(p => {
                             const approved = p.Status === 'Đã duyệt';
+                            const sets = p.Sets || 0;
+                            const payment = p.PaymentStatus || 'Chưa thanh toán';
+
                             container.innerHTML += `
-                                <div class="player-item">
+                                <div class="match-player-row">
                                     <div>
-                                        <div style="font-weight:700; color:white; font-size:14px;">${p.Name}</div>
-                                        <div style="font-size:12px; color:var(--accent-secondary); margin-top:2px;">📞 <a href="tel:${p.Phone}" style="color:inherit; text-decoration:underline;">${p.Phone}</a> | 📊 ${p.Level}</div>
+                                        <div style="font-weight:700; color:white; font-size:14px;">${p.Name} ${approved?'':'<span style="color:var(--warning); font-size:11px;">(Chờ duyệt)</span>'}</div>
+                                        <div style="font-size:12px; color:var(--accent-secondary); margin-top:2px;">📞 <a href="tel:${p.Phone}" style="color:inherit;">${p.Phone}</a> | 📊 ${p.Level}</div>
                                     </div>
-                                    <div>
-                                        ${approved ? '<span style="color:var(--accent-primary); font-size:12px; font-weight:bold;">ĐÃ DUYỆT ✅</span>' : `<button class="btn btn-primary ripple" style="width:auto; padding:6px 12px; font-size:12px;" onclick="KTA_App.Host.approve('${sessionId}', '${p.Name}', this)">Duyệt</button>`}
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        ${approved ? `
+                                            <div class="set-counter-badge">
+                                                <span>Set: <b>${sets}</b></span>
+                                                <button class="set-btn" onclick="KTA_App.Host.updateSets('${sessionId}', '${p.Name}',${sets - 1})">-</button>
+                                                <button class="set-btn" onclick="KTA_App.Host.updateSets('${sessionId}', '${p.Name}',${sets + 1})">+</button>
+                                            </div>
+                                            <button class="btn ${payment==='Đã thanh toán'?'btn-primary':'btn-warning'}" style="padding:6px 10px; font-size:11px; width:auto;" onclick="KTA_App.Host.togglePayment('${sessionId}', '${p.Name}', '${payment}')">${payment}</button>
+                                        ` : `
+                                            <button class="btn btn-primary ripple" style="width:auto; padding:6px 12px; font-size:12px;" onclick="KTA_App.Host.approve('${sessionId}', '${p.Name}')">Duyệt Đơn</button>
+                                        `}
                                     </div>
                                 </div>`;
                         });
@@ -777,44 +797,90 @@
                     }
                 },
 
-                approve: async function(sessionId, name, btn) {
-                    btn.innerText = '...'; btn.disabled = true;
+                approve: async function(sessionId, name) {
                     try {
                         await KTA_App.API.execute('approveSlot', { sessionId: sessionId, name: name });
-                        btn.outerHTML = `<span style="color:var(--accent-primary); font-size:12px; font-weight:bold;">ĐÃ DUYỆT ✅</span>`;
-                        KTA_App.UI.toast('success', `Đã duyệt thành công cho ${name}!`);
-                    } catch(e) {
-                        KTA_App.UI.toast('error', 'Lỗi khi duyệt!');
-                        btn.innerText = 'Duyệt'; btn.disabled = false;
-                    }
+                        KTA_App.UI.toast('success', `Đã duyệt đơn cho ${name}!`);
+                        this.openPlayers(sessionId, document.getElementById('mLocText').innerText.replace('Sân: ', ''));
+                    } catch(e) { KTA_App.UI.toast('error', 'Lỗi duyệt đơn!'); }
                 },
 
-                calculateBill: function() {
-                    const c = Number(document.getElementById('fCourt').value) || 0;
-                    const s = Number(document.getElementById('fShuttle').value) || 0;
-                    const p = Number(document.getElementById('fPeople').value) || 0;
-                    const total = c + s;
-                    const split = p > 0 ? Math.ceil((total / p) / 1000) * 1000 : 0;
-                    document.getElementById('fResultText').innerText = split.toLocaleString('vi-VN') + ' ₫';
+                updateSets: async function(sessionId, name, newSets) {
+                    if (newSets < 0) return;
+                    try {
+                        await KTA_App.API.execute('updatePlayerMatch', { sessionId: sessionId, name: name, sets: newSets });
+                        KTA_App.UI.toast('success', `Đã cập nhật set cho ${name} thành ${newSets}!`);
+                        this.openPlayers(sessionId, document.getElementById('mLocText').innerText.replace('Sân: ', ''));
+                    } catch(e) { KTA_App.UI.toast('error', 'Lỗi cập nhật set!'); }
                 },
 
-                generateQR: function() {
-                    const bank = document.getElementById('qrBankId').value.trim();
-                    const acc = document.getElementById('qrAccNo').value.trim();
-                    const c = Number(document.getElementById('fCourt').value) || 0;
-                    const s = Number(document.getElementById('fShuttle').value) || 0;
-                    const p = Number(document.getElementById('fPeople').value) || 0;
-                    const amount = p > 0 ? Math.ceil(((c + s) / p) / 1000) * 1000 : 0;
+                togglePayment: async function(sessionId, name, currentStatus) {
+                    const nextStatus = currentStatus === 'Đã thanh toán' ? 'Chưa thanh toán' : 'Đã thanh toán';
+                    try {
+                        await KTA_App.API.execute('updatePlayerMatch', { sessionId: sessionId, name: name, paymentStatus: nextStatus });
+                        KTA_App.UI.toast('success', `Trạng thái: ${name} -> ${nextStatus}!`);
+                        this.openPlayers(sessionId, document.getElementById('mLocText').innerText.replace('Sân: ', ''));
+                    } catch(e) { KTA_App.UI.toast('error', 'Lỗi đổi trạng thái tiền!'); }
+                },
 
-                    if(!bank || !acc) {
-                        KTA_App.UI.toast('error', 'Vui lòng nhập mã ngân hàng và số tài khoản!');
+                addItemPOS: function(name, price) {
+                    this.State.posCart.push({ name, price });
+                    this.renderPOSCart();
+                    KTA_App.UI.toast('success', `Đã thêm ${name} vào giỏ!`);
+                },
+
+                renderPOSCart: function() {
+                    const list = document.getElementById('posCartList');
+                    const totalEl = document.getElementById('posTotal');
+                    if (KTA_App.State.posCart.length === 0) {
+                        list.innerHTML = 'Chưa có món nào được chọn.';
+                        totalEl.innerText = '0 ₫';
                         return;
                     }
+                    list.innerHTML = '';
+                    let total = 0;
+                    KTA_App.State.posCart.forEach((item) => {
+                        total += item.price;
+                        list.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>• ${item.name}</span> <span>${item.price.toLocaleString('vi-VN')} ₫</span></div>`;
+                    });
+                    totalEl.innerText = total.toLocaleString('vi-VN') + ' ₫';
+                },
 
-                    const qrUrl = `https://img.vietqr.io/image/${bank}-${acc}-compact2.png?amount=${amount}&addInfo=Tien%20cau%20long`;
-                    document.getElementById('qrImageContainer').innerHTML = `
-                        <img src="${qrUrl}" alt="VietQR" style="max-width:200px; border-radius:10px; border:2px solid white; margin-top:12px; box-shadow:0 10px 25px rgba(0,0,0,0.5);">
-                        <div style="font-size:12px; color:var(--text-secondary); margin-top:6px;">Quét QR bằng App Ngân hàng để chuyển khoản</div>`;
+                loadStats: async function() {
+                    try {
+                        const sessions = await KTA_App.API.execute();
+                        const users = await KTA_App.API.execute('getUsers');
+                        
+                        document.getElementById('statSessionsCount').innerText = sessions ? sessions.length : 0;
+                        document.getElementById('statUsersCount').innerText = users ? users.length : 0;
+                        
+                        let fixedCount = 0;
+                        let retailCount = 0;
+                        const crmList = document.getElementById('customerCRMList');
+                        crmList.innerHTML = '';
+
+                        if (users && users.length > 0) {
+                            users.forEach(u => {
+                                const type = u.Type || 'Khách lẻ';
+                                if (type.includes('cố định')) fixedCount++;
+                                else retailCount++;
+
+                                crmList.innerHTML += `
+                                    <div class="manage-item" style="margin-bottom:8px; padding:12px;">
+                                        <div>
+                                            <div style="font-weight:700; color:white; font-size:14px;">${u.Name} <span style="font-size:11px; color:var(--accent-secondary); background:rgba(59,130,246,0.1); padding:2px 6px; border-radius:4px; margin-left:6px;">${type}</span></div>
+                                            <div style="font-size:12px; color:var(--text-secondary); margin-top:2px;">📞 ${u.Phone} | 📊 ${u.Level}</div>
+                                        </div>
+                                    </div>`;
+                            });
+                        } else {
+                            crmList.innerHTML = `<div style="text-align:center; color:var(--text-secondary); padding:10px;">Chưa có dữ liệu khách hàng.</div>`;
+                        }
+
+                        document.getElementById('statCustomerTypes').innerText = `${fixedCount} cố định / ${retailCount} lẻ`;
+                    } catch(e) {
+                        KTA_App.UI.toast('error', 'Lỗi tải thống kê doanh thu!');
+                    }
                 }
             }
         };
