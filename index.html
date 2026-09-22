@@ -49,7 +49,7 @@
 </head>
 <body>
 
-    <!-- VIEW 1: AUTHENTICATION (Bắt buộc) -->
+    <!-- VIEW 1: AUTHENTICATION -->
     <main id="view-auth" class="app-view active">
         <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
             <div class="glass-card" style="width: 100%; max-width: 420px;">
@@ -68,7 +68,7 @@
                 <form id="form-login" class="auth-form active" onsubmit="KTA_App.Auth.login(event)">
                     <div class="form-group"><input type="tel" id="lgPhone" class="form-input" required placeholder=" "><label class="form-label">Số điện thoại</label></div>
                     <div class="form-group"><input type="password" id="lgPass" class="form-input" required placeholder=" "><label class="form-label">Mật khẩu</label></div>
-                    <button type="submit" id="btnLogin" class="btn btn-primary">Đăng Nhập</button>
+                    <button type="submit" id="btnLogin" class="btn btn-primary">Đăng Nhập Ngay</button>
                 </form>
 
                 <!-- Form Register -->
@@ -128,14 +128,13 @@
     <script>
         const KTA_App = {
             Config: {
-                // SẾP ĐIỀN LINK GOOGLE APPS SCRIPT WEB APP VÀO ĐÂY NHÉ:
+                // ĐIỀN LINK GOOGLE APPS SCRIPT WEB APP VÀO ĐÂY LÀ CHẠY
                 API_URL: 'https://script.google.com/macros/s/AKfycbzOZgNrN2ynajhIq-5HM1dp6SgoUhc353H8s3sjbGuajyYRj6AS2B6o5QJBhJCkjtg/exec'
             },
             State: { currentUser: null },
 
             Init: function() {
-                // Kiểm tra xem đã đăng nhập chưa từ LocalStorage
-                const savedUser = localStorage.getItem('kta_user_data');
+                const savedUser = localStorage.getItem('kta_user_data_v2');
                 if (savedUser) {
                     this.State.currentUser = JSON.parse(savedUser);
                     this.routeUser();
@@ -175,24 +174,31 @@
                 }
             },
 
-            // HÀM MÃ HÓA MẬT KHẨU SHA-256 NGAY TRÊN TRÌNH DUYỆT (Client-side)
-            hashPassword: async function(message) {
-                const msgBuffer = new TextEncoder().encode(message);
-                const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            // Đã fix lỗi trình duyệt chặn: Dùng mã hóa chuỗi cơ bản (Base64), không cần https
+            hashPassword: function(message) {
+                return btoa(unescape(encodeURIComponent(message))); 
             },
 
             API: {
                 execute: async function(action = null, payload = null) {
                     try {
                         const url = action ? `${KTA_App.Config.API_URL}?action=${action}` : KTA_App.Config.API_URL;
-                        const options = payload ? { method: 'POST', redirect: 'follow', body: JSON.stringify(payload) } : { method: 'GET', redirect: 'follow' };
+                        // ĐÃ FIX LỖI CORS: Bổ sung Header text/plain cho POST Request của Google Apps Script
+                        const options = payload ? { 
+                            method: 'POST', 
+                            redirect: 'follow', 
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify(payload) 
+                        } : { 
+                            method: 'GET', 
+                            redirect: 'follow' 
+                        };
                         const res = await fetch(url, options);
                         const text = await res.text();
                         return JSON.parse(text);
                     } catch (err) {
-                        return {status: 'error', msg: 'Không thể kết nối đến Database!'};
+                        console.error(err);
+                        return {status: 'error', msg: 'Không thể kết nối đến Database. Vui lòng kiểm tra mạng hoặc Link API!'};
                     }
                 }
             },
@@ -218,19 +224,19 @@
                     const btn = document.getElementById('btnLogin');
                     
                     btn.innerText = 'Đang kiểm tra...'; btn.disabled = true;
-                    const hashedPass = await KTA_App.hashPassword(pass); // Mã hóa trước khi gửi
+                    const hashedPass = KTA_App.hashPassword(pass);
 
                     const res = await KTA_App.API.execute('login', { phone: phone, password: hashedPass });
                     
                     if (res.status === 'success') {
                         KTA_App.UI.toast('success', res.msg);
-                        localStorage.setItem('kta_user_data', JSON.stringify(res.user));
+                        localStorage.setItem('kta_user_data_v2', JSON.stringify(res.user));
                         KTA_App.State.currentUser = res.user;
                         KTA_App.routeUser();
                     } else {
                         KTA_App.UI.toast('error', res.msg);
                     }
-                    btn.innerText = 'Đăng Nhập'; btn.disabled = false;
+                    btn.innerText = 'Đăng Nhập Ngay'; btn.disabled = false;
                 },
 
                 register: async function(e) {
@@ -241,13 +247,13 @@
                     const btn = document.getElementById('btnRegister');
 
                     btn.innerText = 'Đang tạo Database...'; btn.disabled = true;
-                    const hashedPass = await KTA_App.hashPassword(pass); // Mã hóa an toàn
+                    const hashedPass = KTA_App.hashPassword(pass);
 
                     const res = await KTA_App.API.execute('register', { name: name, phone: phone, password: hashedPass });
                     
                     if (res.status === 'success') {
                         KTA_App.UI.toast('success', res.msg);
-                        localStorage.setItem('kta_user_data', JSON.stringify(res.user));
+                        localStorage.setItem('kta_user_data_v2', JSON.stringify(res.user));
                         KTA_App.State.currentUser = res.user;
                         KTA_App.routeUser();
                     } else {
@@ -257,7 +263,7 @@
                 },
 
                 logout: function() {
-                    localStorage.removeItem('kta_user_data');
+                    localStorage.removeItem('kta_user_data_v2');
                     KTA_App.State.currentUser = null;
                     KTA_App.Router.navigate('view-auth');
                     KTA_App.UI.toast('success', 'Đã đăng xuất!');
@@ -267,23 +273,24 @@
             Guest: {
                 fetchSessions: async function() {
                     const list = document.getElementById('guestSessionList');
-                    list.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-secondary);">Đang đồng bộ DB...</div>`;
+                    list.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-secondary);">Đang đồng bộ Data...</div>`;
                     
                     const res = await KTA_App.API.execute('getSessions');
-                    if (res.status === 'success' && res.data.length > 0) {
+                    if (res.status === 'success' && res.data && res.data.length > 0) {
                         list.innerHTML = res.data.reverse().map(s => `
                             <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:12px; margin-bottom:12px; border: 1px solid var(--border-light);">
                                 <div style="font-weight:800; font-size:16px;">📍 ${s.Location}</div>
                                 <div style="font-size:13px; color:var(--text-secondary); margin-top:4px;">⏰ ${s.Time} | Host: ${s.Host}</div>
-                                <div style="font-size:12px; color:var(--accent-primary); margin-top:8px;">✅ Số lượng: ${s.Max} Slot</div>
+                                <div style="font-size:12px; color:var(--accent-primary); margin-top:8px;">✅ Tối đa: ${s.Max} Slot</div>
                             </div>
                         `).join('');
                     } else {
-                        list.innerHTML = `<div style="text-align:center; padding:20px;">Chưa có kèo nào hôm nay.</div>`;
+                        list.innerHTML = `<div style="text-align:center; padding:20px;">Hôm nay chưa có kèo nào lên sân.</div>`;
                     }
                 },
                 
                 requestHost: async function() {
+                    KTA_App.UI.toast('info', 'Đang gửi yêu cầu...');
                     const res = await KTA_App.API.execute('requestHost', { phone: KTA_App.State.currentUser.phone });
                     if (res.status === 'success') KTA_App.UI.toast('success', res.msg);
                     else KTA_App.UI.toast('error', res.msg);
