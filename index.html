@@ -29,7 +29,6 @@
             --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             --radius-md: 12px;
             --radius-lg: 20px;
-            --radius-pill: 9999px;
             --z-nav: 100;
             --z-toast: 2000;
             --z-loader: 9999;
@@ -57,7 +56,7 @@
 
         .btn {
             display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            width: 100%; padding: 15px 20px; border-radius: var(--radius-md); border: none;
+            width: 100%; padding: 14px 20px; border-radius: var(--radius-md); border: none;
             font-size: 14.5px; font-weight: 700; cursor: pointer; transition: 0.2s; color: white;
         }
         .btn:active { transform: scale(0.97); }
@@ -66,11 +65,11 @@
         .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); color: white; }
 
         .form-group { position: relative; margin-bottom: 20px; }
-        .form-input {
+        .form-input, .form-select {
             width: 100%; background: var(--bg-surface); border: 1px solid var(--border-light);
             padding: 16px; border-radius: var(--radius-md); color: white; font-size: 15px; outline: none; transition: 0.3s;
         }
-        .form-input:focus { border-color: var(--accent-primary); box-shadow: 0 0 0 4px rgba(16,185,129,0.1); }
+        .form-input:focus, .form-select:focus { border-color: var(--accent-primary); box-shadow: 0 0 0 4px rgba(16,185,129,0.1); }
         .form-label { position: absolute; left: 16px; top: 16px; color: var(--text-secondary); font-size: 14px; pointer-events: none; transition: 0.3s; }
         .form-input:focus ~ .form-label, .form-input:not(:placeholder-shown) ~ .form-label {
             top: -10px; left: 12px; font-size: 12px; font-weight: 700; color: var(--accent-primary); background: var(--bg-body); padding: 0 6px;
@@ -90,7 +89,8 @@
         /* GUEST CSS */
         .user-container { max-width: 640px; margin: 0 auto; padding: 20px 16px 100px; }
         .header-main { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid var(--border-light); margin-bottom: 24px; }
-        .session-card { background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; border-left: 4px solid var(--accent-primary); }
+        .session-card { background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; border-left: 4px solid var(--accent-primary); transition: 0.2s; }
+        .session-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
 
         /* HOST DASHBOARD CSS */
         .host-layout { display: flex; height: 100vh; overflow: hidden; }
@@ -180,7 +180,7 @@
                 <button id="btnReqHost" class="btn btn-primary" style="width:auto; padding:10px 16px; font-size:12px;" onclick="KTA_App.Guest.requestHost()">🙋‍♂️ Xin quyền Host</button>
             </div>
 
-            <h3 style="font-size: 16px; margin-bottom: 16px; font-weight: 800;">Lịch Đặt Sân Hôm Nay</h3>
+            <h3 style="font-size: 16px; margin-bottom: 16px; font-weight: 800;">Lịch Sân Đang Mở Đăng Ký Slot</h3>
             <div id="guestSessionList"><div style="text-align:center; padding:30px; color:var(--text-secondary);">Đang đồng bộ Data...</div></div>
         </div>
     </main>
@@ -193,7 +193,7 @@
                     <img src="logo.png" alt="Logo" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">
                     <span style="font-size: 16px; font-weight: 900; color: var(--accent-primary);">KTA Enterprise</span>
                 </div>
-                <a class="nav-link active" onclick="KTA_App.Host.switchTab('htab-create', this)">📅 Tạo Lịch Sân</a>
+                <a class="nav-link active" onclick="KTA_App.Host.switchTab('htab-create', this)">📅 Phát Lịch Sân</a>
                 <a class="nav-link" onclick="KTA_App.Host.switchTab('htab-manage', this); KTA_App.Host.fetchManageData();">🏸 Quản Lý Kèo</a>
                 <a class="nav-link" onclick="KTA_App.Host.switchTab('htab-crm', this); KTA_App.Host.loadCRM();">👥 Khách Hàng</a>
                 <div style="flex:1"></div>
@@ -201,18 +201,36 @@
             </nav>
 
             <div class="host-main">
+                <!-- Tab Tạo Kèo Sân -->
                 <div id="htab-create" class="host-tab-pane active">
-                    <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 20px;">Tạo Lịch Đặt Sân Mới</h2>
-                    <div class="glass-card" style="max-width: 600px;">
+                    <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 20px;">Phát Lịch Đặt Sân & Chi Tiết Kèo</h2>
+                    <div class="glass-card" style="max-width: 620px;">
                         <form onsubmit="KTA_App.Host.createSession(event)">
-                            <div class="form-group"><input type="text" id="hcTime" class="form-input" required placeholder=" "><label class="form-label">Thời gian (VD: 19h - 22h T6)</label></div>
-                            <div class="form-group"><input type="text" id="hcLoc" class="form-input" required placeholder=" "><label class="form-label">Tên Sân Bãi</label></div>
-                            <div class="form-group"><input type="number" id="hcMax" class="form-input" required placeholder=" " value="8"><label class="form-label">Số slot tối đa</label></div>
+                            <div class="form-group"><input type="text" id="hcLoc" class="form-input" required placeholder=" "><label class="form-label">Tên Sân / Địa điểm (VD: Sân Cầu Lông Nguyên Phát)</label></div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div class="form-group"><input type="date" id="hcDate" class="form-input" required placeholder=" "></div>
+                                <div class="form-group"><input type="text" id="hcTime" class="form-input" required placeholder=" "><label class="form-label">Thời gian (VD: 19:00 - 21:00)</label></div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div class="form-group">
+                                    <select id="hcShuttle" class="form-select" required>
+                                        <option value="VinaStar">VinaStar</option>
+                                        <option value="Thành Công">Thành Công</option>
+                                        <option value="Victor">Victor</option>
+                                        <option value="88">88</option>
+                                        <option value="Khác">Khác</option>
+                                    </select>
+                                    <label class="form-label" style="top:-10px; left:12px; font-size:12px; background:var(--bg-surface);">Loại cầu</label>
+                                </div>
+                                <div class="form-group"><input type="number" id="hcMax" class="form-input" required placeholder=" " value="8"><label class="form-label">Số slot tối đa</label></div>
+                            </div>
+                            <div class="form-group"><input type="text" id="hcLevel" class="form-input" required placeholder=" " value="Từ Lvl 3 (TB Yếu) trở lên"><label class="form-label">Yêu cầu Trình độ</label></div>
                             <button type="submit" id="btnCreateSess" class="btn btn-primary">Phát Kèo Lên Hệ Thống</button>
                         </form>
                     </div>
                 </div>
 
+                <!-- Tab Quản Lý Sân -->
                 <div id="htab-manage" class="host-tab-pane">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <h2 style="font-size: 24px; font-weight: 900;">Quản Lý Kèo Đang Mở</h2>
@@ -221,6 +239,7 @@
                     <div id="hostManageList"><div style="text-align:center; padding:30px; color:var(--text-secondary);">Đang quét dữ liệu...</div></div>
                 </div>
 
+                <!-- Tab CRM -->
                 <div id="htab-crm" class="host-tab-pane">
                     <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 20px;">Dữ Liệu Thành Viên & Yêu Cầu Host</h2>
                     <div id="customerCRMList"><div style="text-align:center; padding:30px; color:var(--text-secondary);">Đang đồng bộ CRM...</div></div>
@@ -240,7 +259,7 @@
             State: { currentUser: null },
 
             Init: function() {
-                const savedUser = localStorage.getItem('kta_user_data_v4');
+                const savedUser = localStorage.getItem('kta_user_data_v5');
                 if (savedUser) {
                     try {
                         this.State.currentUser = JSON.parse(savedUser);
@@ -343,7 +362,7 @@
                     
                     if (res.status === 'success') {
                         KTA_App.UI.toast('success', res.msg);
-                        localStorage.setItem('kta_user_data_v4', JSON.stringify(res.user));
+                        localStorage.setItem('kta_user_data_v5', JSON.stringify(res.user));
                         KTA_App.State.currentUser = res.user;
                         KTA_App.routeUser();
                     } else {
@@ -364,7 +383,7 @@
                     
                     if (res.status === 'success') {
                         KTA_App.UI.toast('success', res.msg);
-                        localStorage.setItem('kta_user_data_v4', JSON.stringify(res.user));
+                        localStorage.setItem('kta_user_data_v5', JSON.stringify(res.user));
                         KTA_App.State.currentUser = res.user;
                         KTA_App.routeUser();
                     } else {
@@ -373,7 +392,7 @@
                     btn.innerText = 'Đăng Ký Tài Khoản'; btn.disabled = false;
                 },
                 logout: function() {
-                    localStorage.removeItem('kta_user_data_v4');
+                    localStorage.removeItem('kta_user_data_v5');
                     KTA_App.State.currentUser = null;
                     KTA_App.Router.navigate('view-auth');
                     KTA_App.UI.toast('success', 'Đã đăng xuất!');
@@ -388,13 +407,33 @@
                     if (res.status === 'success' && res.data && res.data.length > 0) {
                         list.innerHTML = res.data.reverse().map(s => `
                             <div class="session-card">
-                                <div style="font-weight:900; color:white; font-size:16px;">📍 ${s.Location}</div>
-                                <div style="color:var(--text-secondary); margin-top:6px; font-size:13.5px;">⏰ ${s.Time} | Host: ${s.Host}</div>
-                                <div style="color:var(--accent-primary); margin-top:8px; font-size:12.5px; font-weight:700;">✅ Tối đa: ${s.Max} Slot</div>
+                                <div style="font-weight:900; color:white; font-size:17px; margin-bottom:6px;">📍 ${s.Location}</div>
+                                <div style="display:grid; gap:4px; font-size:13.5px; color:var(--text-secondary); margin-bottom:12px;">
+                                    <div>📅 Ngày: <b style="color:white;">${s.Date || 'Hôm nay'}</b> | ⏰ Giờ: <b style="color:white;">${s.Time}</b></div>
+                                    <div>👑 Host: <b style="color:var(--accent-secondary);">${s.Host}</b> | 🏸 Loại cầu: <b style="color:white;">${s.Shuttlecock || 'VinaStar'}</b></div>
+                                    <div>📊 Trình độ: <b style="color:var(--warning);">${s.ReqLevel || 'Mọi trình độ'}</b></div>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-light); padding-top:10px;">
+                                    <span style="font-size:12.5px; color:var(--accent-primary); font-weight:700;">✅ Tối đa: ${s.Max} Slot</span>
+                                    <button class="btn btn-primary" style="width:auto; padding:8px 16px; font-size:12px;" onclick="KTA_App.Guest.joinSlot('${s.ID}')">Đăng Ký Slot</button>
+                                </div>
                             </div>
                         `).join('');
                     } else {
-                        list.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-secondary);">Chưa có kèo nào hôm nay.</div>`;
+                        list.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-secondary);">Chưa có lịch sân nào hôm nay.</div>`;
+                    }
+                },
+                joinSlot: async function(sessionId) {
+                    if(!confirm("Bạn có chắc chắn muốn đăng ký giữ slot vào sân này?")) return;
+                    const res = await KTA_App.API.execute('joinSlot', {
+                        sessionId: sessionId,
+                        name: KTA_App.State.currentUser.name,
+                        phone: KTA_App.State.currentUser.phone
+                    });
+                    if(res.status === 'success') {
+                        KTA_App.UI.toast('success', res.msg);
+                    } else {
+                        KTA_App.UI.toast('error', res.msg || 'Đăng ký thất bại!');
                     }
                 },
                 requestHost: async function() {
@@ -420,14 +459,17 @@
                 createSession: async function(e) {
                     e.preventDefault();
                     const btn = document.getElementById('btnCreateSess');
-                    btn.innerText = 'Đang đẩy lên DB...'; btn.disabled = true;
+                    btn.innerText = 'Đang phát lịch...'; btn.disabled = true;
 
                     const res = await KTA_App.API.execute('createSession', {
                         id: 'S_' + Date.now(),
                         host: KTA_App.State.currentUser.name,
+                        date: document.getElementById('hcDate').value,
                         time: document.getElementById('hcTime').value,
                         location: document.getElementById('hcLoc').value,
-                        max: document.getElementById('hcMax').value
+                        shuttlecock: document.getElementById('hcShuttle').value,
+                        max: document.getElementById('hcMax').value,
+                        reqLevel: document.getElementById('hcLevel').value
                     });
 
                     if (res.status === 'success') {
@@ -447,7 +489,7 @@
                             <div class="manage-item">
                                 <div>
                                     <div style="font-weight:800; color:white; font-size:15px; margin-bottom:4px;">📍 ${s.Location}</div>
-                                    <div style="font-size:13px; color:var(--text-secondary);">⏰ ${s.Time} | Host: ${s.Host}</div>
+                                    <div style="font-size:13px; color:var(--text-secondary);">📅 ${s.Date || 'Hôm nay'} | ⏰ ${s.Time} | Cầu: ${s.Shuttlecock || 'VinaStar'}</div>
                                 </div>
                                 <span style="font-size:11px; font-weight:900; color:var(--accent-primary); background:rgba(16,185,129,0.1); padding:6px 12px; border-radius:8px;">${s.Status || 'OPEN'}</span>
                             </div>
